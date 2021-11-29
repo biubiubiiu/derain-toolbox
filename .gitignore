@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+**/*.pyc
+
+# C extensions
+*.so
+
+# custom
+.vscode
+.idea
+*.pkl
+*.pkl.json
+*.log.json
+work_dirs/
+/data/
+/data
+mmedit/.mim
+
+# Pytorch
+*.pth
