@@ -21,7 +21,7 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
         2. 3D Tensor of shape (3/1 x H x W) and 2D Tensor of shape (H x W):
             Directly change to numpy array.
 
-    Note that the image channel in input tensors should be RGB order. This
+    Note that the image channel in input tensors should be BGR order. This
     function will convert it to cv2 convention, i.e., (H x W x C) with BGR
     order.
 
@@ -58,10 +58,10 @@ def tensor2img(tensor, out_type=np.uint8, min_max=(0, 1)):
             img_np = make_grid(
                 _tensor, nrow=int(math.sqrt(_tensor.size(0))),
                 normalize=False).numpy()
-            img_np = np.transpose(img_np[[2, 1, 0], :, :], (1, 2, 0))
+            img_np = np.transpose(img_np, (1, 2, 0))
         elif n_dim == 3:
             img_np = _tensor.numpy()
-            img_np = np.transpose(img_np[[2, 1, 0], :, :], (1, 2, 0))
+            img_np = np.transpose(img_np, (1, 2, 0))
         elif n_dim == 2:
             img_np = _tensor.numpy()
         else:
