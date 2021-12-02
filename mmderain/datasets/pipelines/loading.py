@@ -15,8 +15,9 @@ class LoadImageFromFile:
 
     Args:
         io_backend (str): io backend where images are store. Default: 'disk'.
-        filepath (str): The path to find the images.
-        key (str): Keys in results. Default: 'gt'.
+        key (str): Keys in results to find corresponding path. Default: 'gt'.
+        mapped_key (str, optional): If specified, use `mapped_key` as key in
+            the result. Default: None.
         flag (str): Loading flag for images. Default: 'color'.
         channel_order (str): Order of channel, candidates are 'bgr' and 'rgb'.
             Default: 'bgr'.
@@ -29,18 +30,20 @@ class LoadImageFromFile:
     """
 
     def __init__(self,
-                 filepath,
-                 io_backend='disk',
                  key='gt',
+                 mapped_key=None,
+                 io_backend='disk',
                  flag='color',
                  channel_order='bgr',
                  save_original_img=False,
                  use_cache=False,
                  backend=None,
                  **kwargs):
-        self.filepath = filepath
         self.io_backend = io_backend
         self.key = key
+        self.mapped_key = key
+        if mapped_key is not None:
+            self.mapped_key = mapped_key
         self.flag = flag
         self.save_original_img = save_original_img
         self.channel_order = channel_order
@@ -60,33 +63,34 @@ class LoadImageFromFile:
         Returns:
             dict: A dict containing the processed data and information.
         """
+        filepath = str(results[f'{self.key}_path'])
         if self.file_client is None:
             self.file_client = FileClient(self.io_backend, **self.kwargs)
         if self.use_cache:
             if self.cache is None:
                 self.cache = dict()
-            if self.filepath in self.cache:
-                img = self.cache[self.filepath]
+            if filepath in self.cache:
+                img = self.cache[filepath]
             else:
-                img_bytes = self.file_client.get(self.filepath)
+                img_bytes = self.file_client.get(filepath)
                 img = mmcv.imfrombytes(
                     img_bytes,
                     flag=self.flag,
                     channel_order=self.channel_order,
                     backend=self.backend)  # HWC
-                self.cache[self.filepath] = img
+                self.cache[filepath] = img
         else:
-            img_bytes = self.file_client.get(self.filepath)
+            img_bytes = self.file_client.get(filepath)
             img = mmcv.imfrombytes(
                 img_bytes,
                 flag=self.flag,
                 channel_order=self.channel_order,
                 backend=self.backend)  # HWC
-        results[self.key] = img
-        results[f'{self.key}_path'] = self.filepath
-        results[f'{self.key}_ori_shape'] = img.shape
+        results[self.mapped_key] = img
+        results[f'{self.mapped_key}_path'] = filepath
+        results[f'{self.mapped_key}_ori_shape'] = img.shape
         if self.save_original_img:
-            results[f'ori_{self.key}'] = img.copy()
+            results[f'ori_{self.mapped_key}'] = img.copy()
 
         return results
 
@@ -94,6 +98,7 @@ class LoadImageFromFile:
         repr_str = self.__class__.__name__
         repr_str += (
             f'(io_backend={self.io_backend}, key={self.key}, '
+            f'mapped_key={self.mapped_key}'
             f'flag={self.flag}, save_original_img={self.save_original_img}, '
             f'channel_order={self.channel_order}, use_cache={self.use_cache})')
         return repr_str
