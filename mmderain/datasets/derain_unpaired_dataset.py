@@ -1,11 +1,11 @@
 # This code is taken from https://github.com/open-mmlab/mmediting
 # Modified by Raymond Wong
 
+import os.path as osp
+from pathlib import Path
 from typing import Callable, Dict, List, Union
 
-import os.path as osp
 import numpy as np
-from pathlib import Path
 
 from .base_derain_dataset import BaseDerainDataset
 from .registry import DATASETS
@@ -15,15 +15,19 @@ from .registry import DATASETS
 class DerainUnpairedDataset(BaseDerainDataset):
     """General unpaired image folder dataset for image deraining.
 
-    It assumes that the training directory of images from domain A is
-    '/path/to/data/trainA', and that from domain B is '/path/to/data/trainB',
-    respectively. '/path/to/data' can be initialized by args 'dataroot'.
-    During test time, the directory is '/path/to/data/testA' and
-    '/path/to/data/testB', respectively.
+    It assumes that the training directory is '/path/to/data/train'.
+    During test time, the directory is '/path/to/data/test'. '/path/to/data'
+    is initialized by args 'dataroot'. The directory of images from domain
+    A, B is specified by args 'dataroot_a' and 'dataroot_b', respectively.
+    (i.e. traning directory to each domain is '/path/to/data/train/{dataroot_a}'
+    and '/path/to/data/train/{dataroot_b}', testing directory to each domain is
+    '/path/to/data/test/{dataroot_a}' and '/path/to/data/test/{dataroot_b}'
 
     Args:
         dataroot (str | :obj:`Path`): Path to the folder root of unpaired
             images.
+        dataroot_a (str): Directory name of domain A images
+        dataroot_b (str): Directory name of domain B images
         pipeline (List[dict | callable]): A sequence of data transformations.
         test_mode (bool): Store `True` when building test dataset.
             Default: `False`.
@@ -32,19 +36,21 @@ class DerainUnpairedDataset(BaseDerainDataset):
     def __init__(
         self,
         dataroot: Union[str, Path],
+        dataroot_a: str,
+        dataroot_b: str,
         pipeline: List[Union[Dict, Callable]],
         test_mode: bool = False
-    ):
+    ) -> None:
         super().__init__(pipeline, test_mode)
         phase = 'test' if test_mode else 'train'
-        self.dataroot_a = osp.join(str(dataroot), phase + 'A')
-        self.dataroot_b = osp.join(str(dataroot), phase + 'B')
+        self.dataroot_a = osp.join(str(dataroot), phase, dataroot_a)
+        self.dataroot_b = osp.join(str(dataroot), phase, dataroot_b)
         self.data_infos_a = self.load_annotations(self.dataroot_a)
         self.data_infos_b = self.load_annotations(self.dataroot_b)
         self.len_a = len(self.data_infos_a)
         self.len_b = len(self.data_infos_b)
 
-    def load_annotations(self, dataroot: str):
+    def load_annotations(self, dataroot: str) -> List[Dict]:
         """Load unpaired image paths of one domain.
 
         Args:
@@ -60,7 +66,7 @@ class DerainUnpairedDataset(BaseDerainDataset):
             data_infos.append(dict(path=path))
         return data_infos
 
-    def prepare_train_data(self, idx):
+    def prepare_train_data(self, idx: int) -> Dict:
         """Prepare unpaired training data.
 
         Args:
@@ -75,7 +81,7 @@ class DerainUnpairedDataset(BaseDerainDataset):
         results = dict(img_a_path=img_a_path, img_b_path=img_b_path)
         return self.pipeline(results)
 
-    def prepare_test_data(self, idx):
+    def prepare_test_data(self, idx: int) -> List[Dict]:
         """Prepare unpaired test data.
 
         Args:

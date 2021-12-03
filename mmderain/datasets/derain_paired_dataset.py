@@ -1,10 +1,9 @@
 # This code is taken from https://github.com/open-mmlab/mmediting
 # Modified by Raymond Wong
 
-from typing import Callable, Dict, List, Union
-
 import os.path as osp
 from pathlib import Path
+from typing import Callable, Dict, List, Union
 
 from .base_derain_dataset import BaseDerainDataset
 from .registry import DATASETS
@@ -31,13 +30,13 @@ class DerainPairedDataset(BaseDerainDataset):
         dataroot: Union[str, Path],
         pipeline: List[Union[Dict, Callable]],
         test_mode: bool = False
-    ):
+    ) -> None:
         super().__init__(pipeline, test_mode)
         phase = 'test' if test_mode else 'train'
         self.dataroot = osp.join(str(dataroot), phase)
         self.data_infos = self.load_annotations()
 
-    def load_annotations(self):
+    def load_annotations(self) -> List[Dict]:
         """Load paired image paths.
 
         Returns:
