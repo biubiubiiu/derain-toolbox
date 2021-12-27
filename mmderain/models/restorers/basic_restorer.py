@@ -7,7 +7,8 @@ import os.path as osp
 import mmcv
 from mmcv.runner import auto_fp16
 
-from mmderain.core import psnr, ssim, tensor2img, crop_border
+from mmderain.core import crop_border, psnr, ssim, tensor2img
+
 from ..base import BaseModel
 from ..builder import build_backbone, build_loss
 from ..registry import MODELS
@@ -25,7 +26,7 @@ class BasicRestorer(BaseModel):
 
     Args:
         generator (dict): Config for the generator structure.
-        pixel_loss (dict): Config for pixel-wise loss.
+        losses (List[dict]): A list of configs for building losses.
         train_cfg (dict): Config for training. Default: None.
         test_cfg (dict): Config for testing. Default: None.
         pretrained (str): Path for pretrained model. Default: None.
@@ -34,7 +35,7 @@ class BasicRestorer(BaseModel):
 
     def __init__(self,
                  generator,
-                 pixel_loss,
+                 losses,
                  train_cfg=None,
                  test_cfg=None,
                  pretrained=None):
@@ -51,7 +52,9 @@ class BasicRestorer(BaseModel):
         self.init_weights(pretrained)
 
         # loss
-        self.pixel_loss = build_loss(pixel_loss)
+        self.loss = dict()
+        for loss in losses:
+            self.loss[loss['type'].lower()] = build_loss(loss)
 
     def init_weights(self, pretrained=None):
         """Init weights for models.
@@ -90,8 +93,10 @@ class BasicRestorer(BaseModel):
         """
         losses = dict()
         output = self.generator(lq)
-        loss_pix = self.pixel_loss(output, gt)
-        losses['loss_pix'] = loss_pix
+
+        for name, loss in self.loss.items():
+            losses[name] = loss(output, gt)
+
         outputs = dict(
             losses=losses,
             num_samples=len(gt.data),

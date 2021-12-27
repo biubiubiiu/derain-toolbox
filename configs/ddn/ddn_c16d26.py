@@ -11,7 +11,7 @@ model = dict(
         mid_channels=16,
         num_blocks=24,
     ),
-    pixel_loss=dict(type='MSELoss', loss_weight=1.0, reduction='mean')
+    losses=[dict(type='MSELoss', loss_weight=1.0, reduction='mean')],
 )
 
 # model training and testing settings
