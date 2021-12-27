@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from mmcv.runner import load_checkpoint
@@ -33,7 +33,11 @@ class RecurrentUnit(nn.Module):
         self.se = SELayer(planes, reduction=4)
         self.act = nn.LeakyReLU(0.2, inplace=True)
 
-    def forward(self, x: torch.Tensor, hx: Optional[torch.Tensor]) -> Tuple[torch.Tensor]:
+    def forward(
+        self,
+        x: torch.Tensor,
+        hx: Optional[Union[torch.Tensor, Tuple[torch.Tensor]]]
+    ) -> Tuple[torch.Tensor, ...]:
         if self.model_type == "LSTM":
             h, c = self.model(x, hx)
             h = self.act(self.se(h))
@@ -44,7 +48,7 @@ class RecurrentUnit(nn.Module):
             return h, h
 
 
-@BACKBONES.register_module()
+@ BACKBONES.register_module()
 class RESCAN(nn.Module):
     """RESCAN Network Structure
 
