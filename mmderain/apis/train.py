@@ -10,7 +10,7 @@ import mmcv
 import numpy as np
 import torch
 from mmcv.parallel import MMDataParallel
-from mmcv.runner import HOOKS, IterBasedRunner
+from mmcv.runner import HOOKS, build_runner
 from mmcv.utils import build_from_cfg
 
 from mmderain.core import DistEvalIterHook, EvalIterHook, build_optimizers
@@ -108,18 +108,18 @@ def _dist_train(model,
     loader_cfg = {
         **dict(seed=cfg.get('seed'), drop_last=False, dist=True),
         **({} if torch.__version__ != 'parrots' else dict(
-               prefetch_num=2,
-               pin_memory=False,
-           )),
+            prefetch_num=2,
+            pin_memory=False,
+        )),
         **dict((k, cfg.data[k]) for k in [
-                   'samples_per_gpu',
-                   'workers_per_gpu',
-                   'shuffle',
-                   'seed',
-                   'drop_last',
-                   'prefetch_num',
-                   'pin_memory',
-               ] if k in cfg.data)
+            'samples_per_gpu',
+            'workers_per_gpu',
+            'shuffle',
+            'seed',
+            'drop_last',
+            'prefetch_num',
+            'pin_memory',
+        ] if k in cfg.data)
     }
 
     # step 2: cfg.data.train_dataloader has highest priority
@@ -137,12 +137,27 @@ def _dist_train(model,
 
     # build runner
     optimizer = build_optimizers(model, cfg.optimizers)
-    runner = IterBasedRunner(
-        model,
-        optimizer=optimizer,
-        work_dir=cfg.work_dir,
-        logger=logger,
-        meta=meta)
+
+    if 'runner' not in cfg:
+        cfg.runner = {
+            'type': 'IterBasedRunner',  # use IterBasedRunner by default
+            'max_iters': cfg.total_iters
+        }
+    else:
+        if 'total_iters' in cfg:
+            assert cfg.total_iters == cfg.runner.total_iters
+
+    runner = build_runner(
+        cfg.runner,
+        default_args=dict(
+            model=model,
+            optimizer=optimizer,
+            work_dir=cfg.work_dir,
+            logger=logger,
+            meta=meta
+        )
+    )
+
     # an ugly walkaround to make the .log and .log.json filenames the same
     runner.timestamp = timestamp
 
@@ -172,9 +187,9 @@ def _dist_train(model,
             **loader_cfg,
             **dict(shuffle=False, drop_last=False),
             **dict((newk, cfg.data[oldk]) for oldk, newk in [
-                       ('val_samples_per_gpu', 'samples_per_gpu'),
-                       ('val_workers_per_gpu', 'workers_per_gpu'),
-                   ] if oldk in cfg.data),
+                ('val_samples_per_gpu', 'samples_per_gpu'),
+                ('val_workers_per_gpu', 'workers_per_gpu'),
+            ] if oldk in cfg.data),
             **cfg.data.get('val_dataloader', {})
         }
 
@@ -203,7 +218,7 @@ def _dist_train(model,
         runner.resume(cfg.resume_from)
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
-    runner.run(data_loaders, cfg.workflow, cfg.total_iters)
+    runner.run(data_loaders, cfg.workflow)
 
 
 def _non_dist_train(model,
@@ -235,18 +250,18 @@ def _non_dist_train(model,
             dist=False,
             num_gpus=cfg.gpus),
         **({} if torch.__version__ != 'parrots' else dict(
-               prefetch_num=2,
-               pin_memory=False,
-           )),
+            prefetch_num=2,
+            pin_memory=False,
+        )),
         **dict((k, cfg.data[k]) for k in [
-                   'samples_per_gpu',
-                   'workers_per_gpu',
-                   'shuffle',
-                   'seed',
-                   'drop_last',
-                   'prefetch_num',
-                   'pin_memory',
-               ] if k in cfg.data)
+            'samples_per_gpu',
+            'workers_per_gpu',
+            'shuffle',
+            'seed',
+            'drop_last',
+            'prefetch_num',
+            'pin_memory',
+        ] if k in cfg.data)
     }
 
     # step 2: cfg.data.train_dataloader has highest priority
@@ -259,12 +274,26 @@ def _non_dist_train(model,
 
     # build runner
     optimizer = build_optimizers(model, cfg.optimizers)
-    runner = IterBasedRunner(
-        model,
-        optimizer=optimizer,
-        work_dir=cfg.work_dir,
-        logger=logger,
-        meta=meta)
+
+    if 'runner' not in cfg:
+        cfg.runner = {
+            'type': 'IterBasedRunner',  # use IterBasedRunner by default
+            'max_iters': cfg.total_iters
+        }
+    else:
+        if 'total_iters' in cfg:
+            assert cfg.total_iters == cfg.runner.total_iters
+
+    runner = build_runner(
+        cfg.runner,
+        default_args=dict(
+            model=model,
+            optimizer=optimizer,
+            work_dir=cfg.work_dir,
+            logger=logger,
+            meta=meta
+        )
+    )
 
     # an ugly walkaround to make the .log and .log.json filenames the same
     runner.timestamp = timestamp
@@ -295,9 +324,9 @@ def _non_dist_train(model,
             **loader_cfg,
             **dict(shuffle=False, drop_last=False),
             **dict((newk, cfg.data[oldk]) for oldk, newk in [
-                       ('val_samples_per_gpu', 'samples_per_gpu'),
-                       ('val_workers_per_gpu', 'workers_per_gpu'),
-                   ] if oldk in cfg.data),
+                ('val_samples_per_gpu', 'samples_per_gpu'),
+                ('val_workers_per_gpu', 'workers_per_gpu'),
+            ] if oldk in cfg.data),
             **cfg.data.get('val_dataloader', {})
         }
 
@@ -325,4 +354,4 @@ def _non_dist_train(model,
         runner.resume(cfg.resume_from)
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
-    runner.run(data_loaders, cfg.workflow, cfg.total_iters)
+    runner.run(data_loaders, cfg.workflow)
