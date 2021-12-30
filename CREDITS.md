@@ -1,6 +1,4 @@
-**mmediting** 
-
-[homepage](https://github.com/open-mmlab/mmediting)
+**mmediting** \[[homepage](https://github.com/open-mmlab/mmediting)\]
 
 <details>
 <summary markdown="span">show license</summary>
@@ -215,9 +213,7 @@
 
 &nbsp;
 
-**guided-filter-pytorch**
-
-[homepage](https://github.com/perrying/guided-filter-pytorch)
+**guided-filter-pytorch** \[[homepage](https://github.com/perrying/guided-filter-pytorch)\]
 
 <details>
 
@@ -251,9 +247,7 @@
 
 &nbsp;
 
-**senet.pytorch**
-
-[homepage](https://github.com/moskomule/senet.pytorch)
+**senet.pytorch** \[[homepage](https://github.com/moskomule/senet.pytorch)\]
 
 <details>
 
@@ -287,9 +281,7 @@
 
 &nbsp;
 
-**pytorch-msssim** 
-
-[homepage](https://github.com/VainF/pytorch-msssim)
+**pytorch-msssim** \[[homepage](https://github.com/VainF/pytorch-msssim)\]
 
 <details>
 
