@@ -95,7 +95,7 @@ lr_config = dict(
 )
 
 checkpoint_config = dict(interval=1000, save_optimizer=True, by_epoch=False)
-evaluation = dict(interval=2000, save_image=True)
+evaluation = dict(interval=2000, save_image=True, by_epoch=False)
 log_config = dict(
     interval=100,
     hooks=[

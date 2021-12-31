@@ -13,7 +13,7 @@ from mmcv.parallel import MMDataParallel
 from mmcv.runner import HOOKS, build_runner
 from mmcv.utils import build_from_cfg
 
-from mmderain.core import DistEvalIterHook, EvalIterHook, build_optimizers
+from mmderain.core import DistEvalHook, EvalHook, build_optimizers
 from mmderain.core.distributed_wrapper import DistributedDataParallelWrapper
 from mmderain.datasets.builder import build_dataloader, build_dataset
 from mmderain.utils import get_root_logger
@@ -196,7 +196,7 @@ def _dist_train(model,
         data_loader = build_dataloader(dataset, **val_loader_cfg)
         save_path = osp.join(cfg.work_dir, 'val_visuals')
         runner.register_hook(
-            DistEvalIterHook(
+            DistEvalHook(
                 data_loader, save_path=save_path, **cfg.evaluation),
             priority='LOW')
 
@@ -333,7 +333,7 @@ def _non_dist_train(model,
         data_loader = build_dataloader(dataset, **val_loader_cfg)
         save_path = osp.join(cfg.work_dir, 'val_visuals')
         runner.register_hook(
-            EvalIterHook(data_loader, save_path=save_path, **cfg.evaluation),
+            EvalHook(data_loader, save_path=save_path, **cfg.evaluation),
             priority='LOW')
 
     # user-defined hooks

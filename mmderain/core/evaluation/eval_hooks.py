@@ -1,52 +1,39 @@
-# This code is taken from https://github.com/open-mmlab/mmediting
+# This code is taken from https://github.com/open-mmlab/mmdetection
 # Modified by Raymond Wong
 
 import os.path as osp
 
-from mmcv.runner import Hook
-from torch.utils.data import DataLoader
+import torch.distributed as dist
+from mmcv.runner import DistEvalHook as BaseDistEvalHook
+from mmcv.runner import EvalHook as BaseEvalHook
+from torch.nn.modules.batchnorm import _BatchNorm
 
 
-class EvalIterHook(Hook):
-    """Non-Distributed evaluation hook for iteration-based runner.
+class EvalHook(BaseEvalHook):
+    """Non-Distributed evaluation hook .
 
     This hook will regularly perform evaluation in a given interval when
     performing in non-distributed environment.
-
-    Args:
-        dataloader (DataLoader): A PyTorch dataloader.
-        interval (int): Evaluation interval. Default: 1.
-        eval_kwargs (dict): Other eval kwargs. It contains:
-            save_image (bool): Whether to save image.
-            save_path (str): The path to save image.
     """
 
-    def __init__(self, dataloader, interval=1, **eval_kwargs):
-        if not isinstance(dataloader, DataLoader):
-            raise TypeError('dataloader must be a pytorch DataLoader, '
-                            f'but got { type(dataloader)}')
-        self.dataloader = dataloader
-        self.interval = interval
-        self.eval_kwargs = eval_kwargs
+    def __init__(self, *args, **eval_kwargs):
+        super(EvalHook, self).__init__(*args, **eval_kwargs)
         self.save_image = self.eval_kwargs.pop('save_image', False)
         self.save_path = self.eval_kwargs.pop('save_path', None)
 
-    def after_train_iter(self, runner):
-        """The behavior after each train iteration.
-
-        Args:
-            runner (``mmcv.runner.BaseRunner``): The runner.
-        """
-        if not self.every_n_iters(runner, self.interval):
+    def _do_evaluate(self, runner):
+        """perform evaluation"""
+        if not self._should_evaluate(runner):
             return
-        runner.log_buffer.clear()
+
         from mmderain.apis import single_gpu_test
         results = single_gpu_test(
             runner.model,
             self.dataloader,
             save_image=self.save_image,
             save_path=self.save_path,
-            iteration=runner.iter)
+            iteration=runner.epoch if self.by_epoch else runner.iter)
+        runner.log_buffer.output['eval_iter_num'] = len(self.dataloader)
         self.evaluate(runner, results)
 
     def evaluate(self, runner, results):
@@ -63,38 +50,32 @@ class EvalIterHook(Hook):
         runner.log_buffer.ready = True
 
 
-class DistEvalIterHook(EvalIterHook):
-    """Distributed evaluation hook.
+class DistEvalHook(BaseDistEvalHook):
+    """Distributed evaluation hook."""
 
-    Args:
-        dataloader (DataLoader): A PyTorch dataloader.
-        interval (int): Evaluation interval. Default: 1.
-        tmpdir (str | None): Temporary directory to save the results of all
-            processes. Default: None.
-        gpu_collect (bool): Whether to use gpu or cpu to collect results.
-            Default: False.
-        eval_kwargs (dict): Other eval kwargs. It may contain:
-            save_image (bool): Whether save image.
-            save_path (str): The path to save image.
-    """
+    def __init__(self, *args, **kwargs):
+        super(DistEvalHook, self).__init__(*args, **kwargs)
+        self.save_image = self.eval_kwargs.pop('save_image', False)
+        self.save_path = self.eval_kwargs.pop('save_path', None)
 
-    def __init__(self,
-                 dataloader,
-                 interval=1,
-                 gpu_collect=False,
-                 **eval_kwargs):
-        super().__init__(dataloader, interval, **eval_kwargs)
-        self.gpu_collect = gpu_collect
+    def _do_evaluate(self, runner):
+        """perform evaluation"""
+        # Synchronization of BatchNorm's buffer (running_mean
+        # and running_var) is not supported in the DDP of pytorch,
+        # which may cause the inconsistent performance of models in
+        # different ranks, so we broadcast BatchNorm's buffers
+        # of rank 0 to other ranks to avoid this.
+        if self.broadcast_bn_buffer:
+            model = runner.model
+            for _, module in model.named_modules():
+                if isinstance(module,
+                              _BatchNorm) and module.track_running_stats:
+                    dist.broadcast(module.running_var, 0)
+                    dist.broadcast(module.running_mean, 0)
 
-    def after_train_iter(self, runner):
-        """The behavior after each train iteration.
-
-        Args:
-            runner (``mmcv.runner.BaseRunner``): The runner.
-        """
-        if not self.every_n_iters(runner, self.interval):
+        if not self._should_evaluate(runner):
             return
-        runner.log_buffer.clear()
+
         from mmderain.apis import multi_gpu_test
         results = multi_gpu_test(
             runner.model,
@@ -103,7 +84,22 @@ class DistEvalIterHook(EvalIterHook):
             gpu_collect=self.gpu_collect,
             save_image=self.save_image,
             save_path=self.save_path,
-            iteration=runner.iter)
+            iteration=runner.epoch if self.by_epoch else runner.iter)
+
         if runner.rank == 0:
             print('\n')
+            runner.log_buffer.output['eval_iter_num'] = len(self.dataloader)
             self.evaluate(runner, results)
+
+    def evaluate(self, runner, results):
+        """Evaluation function.
+
+        Args:
+            runner (``mmcv.runner.BaseRunner``): The runner.
+            results (dict): Model forward results.
+        """
+        eval_res = self.dataloader.dataset.evaluate(
+            results, **self.eval_kwargs)
+        for name, val in eval_res.items():
+            runner.log_buffer.output[name] = val
+        runner.log_buffer.ready = True
