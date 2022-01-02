@@ -23,14 +23,14 @@
 
 The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
-| Method | Rain200L | Rain200H | Rain800 | Rain1200 | Rain1400 |
-| :----: | :------: | :------: | :-----: | :------: | :------: |
+|                  Method                  |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
+| :--------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
 | [ddn_c16d26](/configs/ddn/ddn_c16d26.py) | 32.86/0.947 | 23.99/0.739 | 24.02/0.789 | 29.00/0.850 | 28.67/0.868 |
 
 &nbsp;
 
 **Network Complexity**
 
-| Input shape | Flops | Params |
-| :---------: | :---: | :----: |
+|  Input shape  |   Flops    | Params |
+| :-----------: | :--------: | :----: |
 | (3, 250, 250) | 3.61GFlops | 57.73k |
