@@ -3,8 +3,7 @@ from .augmentation import (Resize, Flip, Pad,
                            RandomMaskDilation, RandomTransposeHW, CopyValues,
                            Quantize)
 from .compose import Compose
-from .crop import (Crop, FixedCrop, PairedRandomCrop,
-                   CropAroundCenter, CropAroundUnknown, CropLike)
+from .crop import (Crop, FixedCrop)
 from .formating import (Collect, ImageToTensor, ToTensor)
 from .loading import (LoadImageFromFile, LoadImageFromFileList,
                       LoadPairedImageFromFile)
@@ -14,7 +13,6 @@ __all__ = [
     'Compose', 'Resize', 'Flip', 'Pad',
     'RandomAffine', 'RandomJitter', 'BinarizeImage', 'Quantize',
     'RandomMaskDilation', 'RandomTransposeHW', 'Crop', 'FixedCrop',
-    'PairedRandomCrop', 'CropAroundCenter', 'CropAroundUnknown', 'CropLike',
     'LoadImageFromFile', 'LoadImageFromFileList', 'LoadPairedImageFromFile', 'Normalize',
     'RescaleToZeroOne', 'Collect', 'ImageToTensor', 'ToTensor',
     'CopyValues'
