@@ -1,7 +1,8 @@
-from .ddn import DDN
-from .rescan import RESCAN
 from .dcsfn import DCSFN
+from .ddn import DDN
+from .derainnet import DerainNet
+from .rescan import RESCAN
 
 __all__ = [
-    'DDN', 'RESCAN', 'DCSFN'
+    'DDN', 'RESCAN', 'DCSFN', 'DerainNet'
 ]
