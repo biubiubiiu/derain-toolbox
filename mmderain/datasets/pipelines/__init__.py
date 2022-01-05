@@ -3,7 +3,7 @@ from .augmentation import (Resize, Flip, Pad,
                            RandomMaskDilation, RandomTransposeHW, CopyValues,
                            Quantize)
 from .compose import Compose
-from .crop import (Crop, FixedCrop)
+from .crop import (RandomCrop, FixedCrop, CenterCrop)
 from .formating import (Collect, ImageToTensor, ToTensor)
 from .loading import (LoadImageFromFile, LoadImageFromFileList,
                       LoadPairedImageFromFile)
@@ -12,8 +12,8 @@ from .normalization import Normalize, RescaleToZeroOne
 __all__ = [
     'Compose', 'Resize', 'Flip', 'Pad',
     'RandomAffine', 'RandomJitter', 'BinarizeImage', 'Quantize',
-    'RandomMaskDilation', 'RandomTransposeHW', 'Crop', 'FixedCrop',
-    'LoadImageFromFile', 'LoadImageFromFileList', 'LoadPairedImageFromFile', 'Normalize',
-    'RescaleToZeroOne', 'Collect', 'ImageToTensor', 'ToTensor',
-    'CopyValues'
+    'RandomMaskDilation', 'RandomTransposeHW', 'RandomCrop', 'FixedCrop',
+    'CenterCrop', 'LoadImageFromFile', 'LoadImageFromFileList', 'LoadPairedImageFromFile', 
+    'Normalize', 'RescaleToZeroOne', 'Collect', 'ImageToTensor',
+    'ToTensor', 'CopyValues', 'CenterCrop'
 ]

@@ -28,7 +28,7 @@ train_pipeline = [
         key='lq,gt',
         flag='color'
     ),
-    dict(type='FixedCrop', keys=['lq', 'gt'], crop_size=(64, 64)),
+    dict(type='RandomCrop', keys=['lq', 'gt'], crop_size=(64, 64)),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
     dict(
