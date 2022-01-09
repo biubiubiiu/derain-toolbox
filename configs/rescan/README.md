@@ -17,7 +17,9 @@
 
 <br/>
 
-&nbsp;
+![rescan](../../figs/rescan.png)
+
+<br/>
 
 **Quantitative Result**
 
@@ -34,7 +36,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 |  [RESCAN(ConvLSTM+Add)](/configs/rescan/rescan_c24s4d5_lstm_add.py)  | 36.85/0.977 | 26.25/0.827 | 26.57/0.847 | 32.17/0.903 | 30.91/0.909 |
 | [RESCAN(ConvLSTM+Full)](/configs/rescan/rescan_c24s4d5_lstm_full.py) | 36.91/0.977 | 26.50/0.833 | 26.58/0.842 | 32.23/0.904 | 31.02/0.911 |
 
-&nbsp;
+<br/>
 
 **Network Complexity**
 

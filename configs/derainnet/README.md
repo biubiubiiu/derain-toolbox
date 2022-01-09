@@ -20,7 +20,9 @@
 
 <br/>
 
-&nbsp;
+![derainnet](../../figs/derainnet.png)
+
+<br/>
 
 **Quantitative Result**
 
@@ -30,7 +32,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 | :----------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
 | [derainnet_c512](/configs/derainnet/derainnet_c512.py) | 32.25/0.945 | 23.12/0.735 | 23.25/0.783 | 28.28/0.846 | 27.53/0.866 |
 
-&nbsp;
+<br/>
 
 **Network Complexity**
 

@@ -17,7 +17,9 @@
 
 <br/>
 
-&nbsp;
+![dcsfn](../../figs/dcsfn.png)
+
+<br/>
 
 **Quantitative Result**
 
@@ -34,7 +36,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 | [DCSFN(LSTM)](/configs/dcsfn/dcsfn_c20s4l16_lstm.py) | 37.66/0.984 | 27.93/0.897 | 26.21/0.855 | 31.55/0.913 | 30.42/0.915 |
 |  [DCSFN(RNN)](/configs/dcsfn/dcsfn_c20s4l16_rnn.py)  | 37.15/0.982 | 27.39/0.893 | 25.12/0.847 | 31.56/0.913 | 28.95/0.907 |
 
-&nbsp;
+<br/>
 
 **Network Complexity**
 

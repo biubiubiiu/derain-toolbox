@@ -17,7 +17,9 @@
 
 <br/>
 
-&nbsp;
+![ddn](../../figs/ddn.png)
+
+<br/>
 
 **Quantitative Result**
 
@@ -27,7 +29,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 | :--------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
 | [ddn_c16d26](/configs/ddn/ddn_c16d26.py) | 32.86/0.947 | 23.99/0.739 | 24.02/0.789 | 29.00/0.850 | 28.67/0.868 |
 
-&nbsp;
+<br/>
 
 **Network Complexity**
 
