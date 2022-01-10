@@ -72,7 +72,8 @@ class DerainNet(nn.Module):
         if isinstance(pretrained, str):
             logger = get_root_logger()
             load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is not None:
-            raise TypeError(
-                f'"pretrained" must be a str or None. ' f"But received {type(pretrained)}."
-            )
+        elif pretrained is None:
+            pass  # use default initialization
+        else:
+            raise TypeError(f'"pretrained" must be a str or None. '
+                            f"But received {type(pretrained)}.")

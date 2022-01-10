@@ -96,4 +96,5 @@ class DDN(nn.Module):
                     nn.init.constant_(m.weight, 1)
                     nn.init.constant_(m.bias, 0)
         else:
-            raise TypeError('pretrained must be a str or None')
+            raise TypeError(f'"pretrained" must be a str or None. '
+                            f"But received {type(pretrained)}.")
