@@ -46,7 +46,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
             dict: Returned training batch.
         """
         results = copy.deepcopy(self.data_infos[idx])
-        return self.pipeline(results)
+        return results
 
     def prepare_test_data(self, idx):
         """Prepare testing data.
@@ -58,7 +58,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
             Tensor: Returned testing batch.
         """
         results = copy.deepcopy(self.data_infos[idx])
-        return self.pipeline(results)
+        return results
 
     def __len__(self):
         """Length of the dataset.
@@ -74,7 +74,5 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         Args:
             idx (int): Index for getting each item.
         """
-        if self.test_mode:
-            return self.prepare_test_data(idx)
-
-        return self.prepare_train_data(idx)
+        data = self.prepare_test_data(idx) if self.test_mode else self.prepare_train_data(idx)
+        return self.pipeline(data)

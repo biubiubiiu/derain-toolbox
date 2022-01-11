@@ -79,7 +79,7 @@ class DerainUnpairedDataset(BaseDerainDataset):
         idx_b = np.random.randint(0, self.len_b)
         img_b_path = self.data_infos_b[idx_b]['path']
         results = dict(img_a_path=img_a_path, img_b_path=img_b_path)
-        return self.pipeline(results)
+        return results
 
     def prepare_test_data(self, idx: int) -> List[Dict]:
         """Prepare unpaired test data.
@@ -93,7 +93,7 @@ class DerainUnpairedDataset(BaseDerainDataset):
         img_a_path = self.data_infos_a[idx % self.len_a]['path']
         img_b_path = self.data_infos_b[idx % self.len_b]['path']
         results = dict(img_a_path=img_a_path, img_b_path=img_b_path)
-        return self.pipeline(results)
+        return results
 
     def __len__(self):
         return max(self.len_a, self.len_b)

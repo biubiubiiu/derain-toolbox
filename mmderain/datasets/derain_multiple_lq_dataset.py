@@ -84,7 +84,7 @@ class DerainMultipleLQDataset(BaseDerainDataset):
         """
         img_lq_path, img_gt_path = self.mapping_table[idx]
         results = dict(lq_path=img_lq_path, gt_path=img_gt_path)
-        return self.pipeline(results)
+        return results
 
     def prepare_test_data(self, idx: int) -> List[Dict]:
         """Prepare unpaired test data.
@@ -97,7 +97,7 @@ class DerainMultipleLQDataset(BaseDerainDataset):
         """
         img_lq_path, img_gt_path = self.mapping_table[idx]
         results = dict(lq_path=img_lq_path, gt_path=img_gt_path)
-        return self.pipeline(results)
+        return results
 
     def generate_mapping_table(self, rule, **kwargs) -> Dict:
         if rule == 'prefix':

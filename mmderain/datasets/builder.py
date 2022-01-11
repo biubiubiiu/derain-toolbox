@@ -13,7 +13,7 @@ from mmcv.runner import get_dist_info
 from mmcv.utils import build_from_cfg
 from torch.utils.data import ConcatDataset, DataLoader
 
-from .dataset_wrappers import RepeatDataset
+from .dataset_wrappers import ExhaustivePatchDataset, RepeatDataset
 from .registry import DATASETS
 from .samplers import DistributedSampler
 
@@ -73,6 +73,9 @@ def build_dataset(cfg, default_args=None):
     elif cfg['type'] == 'RepeatDataset':
         dataset = RepeatDataset(
             build_dataset(cfg['dataset'], default_args), cfg['times'])
+    elif cfg['type'] == 'ExhaustivePatchDataset':
+        dataset = ExhaustivePatchDataset(
+            build_dataset(cfg['dataset'], default_args), cfg['patch_size'], cfg['stride'])
     elif isinstance(cfg.get('ann_file'), (list, tuple)):
         dataset = _concat_dataset(cfg, default_args)
     else:
