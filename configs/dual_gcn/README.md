@@ -25,13 +25,9 @@
 
 The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
-> **_NOTE:_**
->
-> - Number of training epochs is reduced to 30 for Rain1200 and Rain1400.
-
 |                         Method                          |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
 | :-----------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
-| [dual_gcn_c72n11](/configs/dual_gcn/dual_gcn_c72n11.py) | 36.84/0.979 | 27.07/0.860 | 23.68/0.799 | 30.83/0.882 | 30.27/0.904 |
+| [dual_gcn_c72n11](/configs/dual_gcn/dual_gcn_c72n11.py) | 36.84/0.979 | 27.07/0.860 | 23.68/0.799 | 32.44/0.912 | 31.42/0.920 |
 
 <br/>
 
