@@ -13,7 +13,7 @@ from mmcv.runner import get_dist_info
 from mmcv.utils import build_from_cfg
 from torch.utils.data import ConcatDataset, DataLoader
 
-from .dataset_wrappers import ExhaustivePatchDataset, RepeatDataset
+from .dataset_wrappers import ExhaustivePatchDataset
 from .registry import DATASETS
 from .samplers import DistributedSampler
 
@@ -55,10 +55,9 @@ def build_dataset(cfg, default_args=None):
 
     It supports a variety of dataset config. If ``cfg`` is a Sequential (list
     or dict), it will be a concatenated dataset of the datasets specified by
-    the Sequential. If it is a ``RepeatDataset``, then it will repeat the
-    dataset ``cfg['dataset']`` for ``cfg['times']`` times. If the ``ann_file``
-    of the dataset is a Sequential, then it will build a concatenated dataset
-    with the same dataset type but different ``ann_file``.
+    the Sequential. If the ``ann_file`` of the dataset is a Sequential,
+    then it will build a concatenated dataset with the same dataset type 
+    but different ``ann_file``.
 
     Args:
         cfg (dict): Config dict. It should at least contain the key "type".
@@ -70,9 +69,6 @@ def build_dataset(cfg, default_args=None):
     """
     if isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
-    elif cfg['type'] == 'RepeatDataset':
-        dataset = RepeatDataset(
-            build_dataset(cfg['dataset'], default_args), cfg['times'])
     elif cfg['type'] == 'ExhaustivePatchDataset':
         dataset = ExhaustivePatchDataset(
             build_dataset(cfg['dataset'], default_args), cfg['patch_size'], cfg['stride'])
