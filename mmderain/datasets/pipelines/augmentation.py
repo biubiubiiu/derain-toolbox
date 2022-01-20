@@ -284,21 +284,19 @@ class Pad:
 
 @PIPELINES.register_module()
 class RandomAffine:
-    """Apply random affine to input images.
+    """Random affine transformation of input images keeping center invariant
 
     This class is adopted from
-    https://github.com/pytorch/vision/blob/v0.5.0/torchvision/transforms/
-    transforms.py#L1015
+    https://github.com/pytorch/vision/blob/v0.5.0/torchvision/transforms/transforms.py#L1015
     It should be noted that in
-    https://github.com/Yaoyi-Li/GCA-Matting/blob/master/dataloader/
-    data_generator.py#L70
+    https://github.com/Yaoyi-Li/GCA-Matting/blob/master/dataloader/data_generator.py#L70
     random flip is added. See explanation of `flip_ratio` below.
     Required keys are the keys in attribute "keys", modified keys
     are keys in attribute "keys".
 
     Args:
         keys (Sequence[str]): The images to be affined.
-        degrees (float | tuple[float]): Range of degrees to select from. If it
+        degrees (sequence or float or int): Range of degrees to select from. If it
             is a float instead of a tuple like (min, max), the range of degrees
             will be (-degrees, +degrees). Set to 0 to deactivate rotations.
         translate (tuple, optional): Tuple of maximum absolute fraction for
@@ -310,17 +308,25 @@ class RandomAffine:
         scale (tuple, optional): Scaling factor interval, e.g (a, b), then
             scale is randomly sampled from the range a <= scale <= b.
             Default: None.
-        shear (float | tuple[float], optional): Range of shear degrees to
+        shear (sequence or float or int, optional): Range of shear degrees to
             select from. If shear is a float, a shear parallel to the x axis
             and a shear parallel to the y axis in the range (-shear, +shear)
             will be applied. Else if shear is a tuple of 2 values, a x-axis
             shear and a y-axis shear in (shear[0], shear[1]) will be applied.
             Default: None.
+        resample ('nearest', 'bilinear', 'bicubic'}, optional):
+            An optional resampling filters. Default: 'nearest'
         flip_ratio (float, optional): Probability of the image being flipped.
             The flips in horizontal direction and vertical direction are
             independent. The image may be flipped in both directions.
             Default: None.
     """
+
+    _str_to_cv2_interpolation = {
+        'nearest': cv2.INTER_NEAREST,
+        'bilinear': cv2.INTER_LINEAR,
+        'bicubic': cv2.INTER_CUBIC
+    }
 
     def __init__(self,
                  keys,
@@ -328,6 +334,7 @@ class RandomAffine:
                  translate=None,
                  scale=None,
                  shear=None,
+                 resample='nearest',
                  flip_ratio=None):
         self.keys = keys
         if isinstance(degrees, numbers.Number):
@@ -335,21 +342,21 @@ class RandomAffine:
                                   'it must be positive.')
             self.degrees = (-degrees, degrees)
         else:
-            assert isinstance(degrees, tuple) and len(degrees) == 2, \
-                'degrees should be a tuple and it must be of length 2.'
+            assert isinstance(degrees, (tuple, list)) and len(degrees) == 2, \
+                'degrees should be a list or tuple and it must be of length 2.'
             self.degrees = degrees
 
         if translate is not None:
-            assert isinstance(translate, tuple) and len(translate) == 2, \
-                'translate should be a tuple and it must be of length 2.'
+            assert isinstance(translate, (tuple, list)) and len(translate) == 2, \
+                'translate should be a list or tuple and it must be of length 2.'
             for t in translate:
                 assert 0.0 <= t <= 1.0, ('translation values should be '
                                          'between 0 and 1.')
         self.translate = translate
 
         if scale is not None:
-            assert isinstance(scale, tuple) and len(scale) == 2, \
-                'scale should be a tuple and it must be of length 2.'
+            assert isinstance(scale, (tuple, list)) and len(scale) == 2, \
+                'scale should be a list or tuple and it must be of length 2.'
             for s in scale:
                 assert s > 0, 'scale values should be positive.'
         self.scale = scale
@@ -360,10 +367,14 @@ class RandomAffine:
                                     'it must be positive.')
                 self.shear = (-shear, shear)
             else:
-                assert isinstance(shear, tuple) and len(shear) == 2, \
-                    'shear should be a tuple and it must be of length 2.'
-                # X-Axis and Y-Axis shear with (min, max)
-                self.shear = shear
+                assert isinstance(shear, (tuple, list)) and \
+                    (len(shear) == 2 or len(shear) == 4), \
+                    'shear should be a list or tuple and it must be of length 2 or 4.'
+                # X-Axis shear with [min, max]
+                if len(shear) == 2:
+                    self.shear = [shear[0], shear[1], 0., 0.]
+                elif len(shear) == 4:
+                    self.shear = [s for s in shear]
         else:
             self.shear = shear
 
@@ -373,6 +384,11 @@ class RandomAffine:
             self.flip_ratio = flip_ratio
         else:
             self.flip_ratio = 0
+
+        assert resample in self._str_to_cv2_interpolation, \
+            'Resample options should be one of "nearest", "bilinear" and "bicubic"'
+
+        self.resample = resample
 
     @staticmethod
     def _get_params(degrees, translate, scale_ranges, shears, flip_ratio,
@@ -398,7 +414,11 @@ class RandomAffine:
             scale = (1.0, 1.0)
 
         if shears is not None:
-            shear = np.random.uniform(shears[0], shears[1])
+            if len(shears) == 2:
+                shear = [np.random.uniform(shears[0], shears[1]), 0.]
+            elif len(shears) == 4:
+                shear = [np.random.uniform(shears[0], shears[1]),
+                         np.random.uniform(shears[2], shears[3])]
         else:
             shear = 0.0
 
@@ -428,19 +448,25 @@ class RandomAffine:
             [     0                       0                        1]
         Thus, the inverse is M^-1 = C * RSS^-1 * C^-1 * T^-1.
         """
+        if isinstance(shear, numbers.Number):
+            shear = [shear, 0]
+
+        if not isinstance(shear, (tuple, list)) and len(shear) == 2:
+            raise ValueError(
+                'Shear should be a single value or a tuple/list containing ' +
+                f'two values. Got {shear}')
 
         angle = math.radians(angle)
-        shear = math.radians(shear)
+        shear_x, shear_y = [math.radians(s) for s in shear]
         scale_x = 1.0 / scale[0] * flip[0]
         scale_y = 1.0 / scale[1] * flip[1]
 
         # Inverted rotation matrix with scale and shear
-        d = math.cos(angle + shear) * math.cos(angle) + math.sin(
-            angle + shear) * math.sin(angle)
+        d = math.cos(angle + shear_x) * math.cos(angle) + \
+            math.sin(angle + shear_y) * math.sin(angle)
         matrix = [
-            math.cos(angle) * scale_x,
-            math.sin(angle + shear) * scale_x, 0, -math.sin(angle) * scale_y,
-            math.cos(angle + shear) * scale_y, 0
+            math.cos(angle) * scale_x, math.sin(angle + shear_x) * scale_x, 0,
+            -math.sin(angle) * scale_y, math.cos(angle + shear_y) * scale_y, 0
         ]
         matrix = [m / d for m in matrix]
 
@@ -468,23 +494,19 @@ class RandomAffine:
             dict: A dict containing the processed data and information.
         """
         h, w = results[self.keys[0]].shape[:2]
-        # if image is too small, set degree to 0 to reduce introduced dark area
-        if np.maximum(h, w) < 1024:
-            params = self._get_params((0, 0), self.translate, self.scale,
-                                      self.shear, self.flip_ratio, (h, w))
-        else:
-            params = self._get_params(self.degrees, self.translate, self.scale,
-                                      self.shear, self.flip_ratio, (h, w))
+        params = self._get_params(self.degrees, self.translate, self.scale,
+                                  self.shear, self.flip_ratio, (h, w))
 
         center = (w * 0.5 + 0.5, h * 0.5 + 0.5)
         M = self._get_inverse_affine_matrix(center, *params)
         M = np.array(M).reshape((2, 3))
 
+        interpolation_flag = self._str_to_cv2_interpolation[self.resample]
         for key in self.keys:
             results[key] = cv2.warpAffine(
                 results[key],
                 M, (w, h),
-                flags=cv2.INTER_NEAREST + cv2.WARP_INVERSE_MAP)
+                flags=interpolation_flag + cv2.WARP_INVERSE_MAP)
 
         return results
 
