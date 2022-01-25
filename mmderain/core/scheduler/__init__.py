@@ -1,3 +1,6 @@
-from .lr_updater import LinearLrUpdaterHook
+from .lr_updater import (LadderLrUpdaterHook, LinearLrUpdaterHook,
+                         PiecewiseLinearLrUpdaterHook)
 
-__all__ = ['LinearLrUpdaterHook']
+__all__ = [
+    'LadderLrUpdaterHook', 'LinearLrUpdaterHook', 'PiecewiseLinearLrUpdaterHook'
+]
