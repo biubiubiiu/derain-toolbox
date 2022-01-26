@@ -13,6 +13,7 @@ See [getting_started.md](docs/getting_started.md) for the basic usage of mmderai
 - [RESCAN](configs/rescan/README.md) (ECCV' 2018) [[paper](https://openaccess.thecvf.com/content_ECCV_2018/html/Xia_Li_Recurrent_Squeeze-and-Excitation_Context_ECCV_2018_paper.html)] \[[code](https://github.com/XiaLiPKU/RESCAN)\]
 - [PReNet](configs/prenet/README.md) (CVPR' 2019) \[[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Ren_Progressive_Image_Deraining_Networks_A_Better_and_Simpler_Baseline_CVPR_2019_paper.html)\] \[[code](https://github.com/csdwren/PReNet)\]
 - [DCSFN](configs/dcsfn/README.md) (ACMMM' 2020) \[[paper](https://dl.acm.org/doi/abs/10.1145/3394171.3413820)\] \[[code](https://github.com/Ohraincu/DCSFN)]
+- [DRD-Net](configs/drdnet/README.md) (CVPR' 2020) \[[paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Deng_Detail-recovery_Image_Deraining_via_Context_Aggregation_Networks_CVPR_2020_paper.html)\] \[[code](https://github.com/Dengsgithub/DRD-Net)\]
 - [DualGCN](configs/dual_gcn/README.md) (AAAI' 2021) \[[paper](https://ojs.aaai.org/index.php/AAAI/article/view/16224)\] \[[code](https://xueyangfu.github.io/paper/2021/AAAI/code.zip)\]
 
 ## Credits
