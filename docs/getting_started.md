@@ -1,6 +1,6 @@
 # Getting Started
 
-This page provides tutorials about the basic usage of mmderain. 
+This page provides tutorials about the basic usage of this project. 
 
 ## Prerequisites
 

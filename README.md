@@ -1,6 +1,6 @@
 ## Introduction
 
-MMDerain is a single image deraining toolbox based on [PyTorch](https://github.com/pytorch/pytorch) and [mmcv](https://github.com/open-mmlab/mmcv). Some benchmark algorithms for single image deraining are reimplemented in this repo, which are migrated from their official code or reproduced based on their papers (for those have no publicly available code). Experiments of these algorithms are also carried out again, including evalution on benchmark datasets (Rain200L, Rain200H, Rain800, Rain1200 and Rain1400) and tests of network complexity. The results are reported in the corresponding `README` files.
+This is a single image deraining toolbox based on [PyTorch](https://github.com/pytorch/pytorch) and [mmcv](https://github.com/open-mmlab/mmcv). Some benchmark algorithms for single image deraining are reimplemented in this repo, which are migrated from their official code or reproduced based on their papers (for those have no publicly available code). Experiments of these algorithms are also carried out again, including evalution on benchmark datasets (Rain200L, Rain200H, Rain800, Rain1200 and Rain1400) and tests of network complexity. The results are reported in the corresponding `README` files.
 
 ## Get Started
 
