@@ -6,8 +6,8 @@ import os.path as osp
 
 import mmcv
 from mmcv.runner import auto_fp16
-
 from mmderain.core import crop_border, psnr, ssim, tensor2img
+from torch import nn
 
 from ..base import BaseModel
 from ..builder import build_backbone, build_loss
@@ -52,9 +52,10 @@ class BasicRestorer(BaseModel):
         self.init_weights(pretrained)
 
         # loss
-        self.loss = dict()
-        for loss in losses:
-            self.loss[loss['type'].lower()] = build_loss(loss)
+        self.loss = nn.ModuleDict({
+            loss['type'].lower(): build_loss(loss)
+            for loss in losses
+        })
 
     def init_weights(self, pretrained=None):
         """Init weights for models.
