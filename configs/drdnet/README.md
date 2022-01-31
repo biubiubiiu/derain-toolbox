@@ -39,4 +39,4 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |  Input shape  |    Flops     | Params |
 | :-----------: | :----------: | :----: |
-| (3, 250, 250) | 498.33GFlops | 7.98M  |
+| (3, 256, 256) | 522.54GFlops | 7.98M  |

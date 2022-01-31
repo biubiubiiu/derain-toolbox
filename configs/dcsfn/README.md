@@ -42,6 +42,6 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |   Method    |  Input shape  |    Flops    | Params |
 | :---------: | :-----------: | :---------: | :----: |
-| DCSFN(GRU)  | (3, 250, 250) | 70.69GFlops | 6.45M  |
-| DCSFN(LSTM) | (3, 250, 250) | 71.69GFlops | 6.50M  |
-| DCSFN(RNN)  | (3, 250, 250) | 69.04GFlops | 6.37M  |
+| DCSFN(GRU)  | (3, 256, 256) | 74.28GFlops | 6.45M  |
+| DCSFN(LSTM) | (3, 256, 256) | 75.33GFlops | 6.50M  |
+| DCSFN(RNN)  | (3, 256, 256) | 72.55GFlops | 6.37M  |

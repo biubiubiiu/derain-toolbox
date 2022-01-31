@@ -45,9 +45,9 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |     Method     |  Input shape  |    Flops    | Params  |
 | :------------: | :-----------: | :---------: | :-----: |
-|      PRN       | (3, 250, 250) | 35.79GFlops | 95.11k  |
-|     PRN_r      | (3, 250, 250) | 35.79GFlops | 21.12k  |
-|  PReNet(GRU)   | (3, 250, 250) | 56.56GFlops | 150.50k |
-| PReNet_r(GRU)  | (3, 250, 250) | 56.56GFlops | 76.52k  |
-|  PReNet(LSTM)  | (3, 250, 250) | 63.48GFlops | 168.96k |
-| PReNet_r(LSTM) | (3, 250, 250) | 63.48GFlops | 94.98k  |
+|      PRN       | (3, 256, 256) | 37.52GFlops | 95.11k  |
+|     PRN_r      | (3, 256, 256) | 37.52GFlops | 21.12k  |
+|  PReNet(GRU)   | (3, 256, 256) | 59.3GFlops  | 150.50k |
+| PReNet_r(GRU)  | (3, 256, 256) | 59.3GFlops  | 76.52k  |
+|  PReNet(LSTM)  | (3, 256, 256) | 66.56GFlops | 168.96k |
+| PReNet_r(LSTM) | (3, 256, 256) | 66.56GFlops | 94.98k  |

@@ -42,6 +42,6 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |      Method      |  Input shape  |    Flops    | Params  |
 | :--------------: | :-----------: | :---------: | :-----: |
-| RESCAN(ConvGRU)  | (3, 250, 250) | 30.97GFlops | 150.22k |
-| RESCAN(ConvLSTM) | (3, 250, 250) | 41.23GFlops | 197.76k |
-| RESCAN(ConvRNN)  | (3, 250, 250) | 11.80GFlops | 55.13k  |
+| RESCAN(ConvGRU)  | (3, 256, 256) | 32.47GFlops | 150.22k |
+| RESCAN(ConvLSTM) | (3, 256, 256) | 43.23GFlops | 197.76k |
+| RESCAN(ConvRNN)  | (3, 256, 256) | 12.37GFlops | 55.13k  |
