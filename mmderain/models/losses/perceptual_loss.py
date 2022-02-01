@@ -97,7 +97,7 @@ class PerceptualVGG(nn.Module):
 
 @LOSSES.register_module()
 class PerceptualLoss(nn.Module):
-    """Perceptual loss with commonly used style loss.
+    """Perceptual loss.
 
     Args:
         layers_weights (dict): The weight for each layer of vgg feature.
@@ -111,9 +111,6 @@ class PerceptualLoss(nn.Module):
         perceptual_weight (float): If `perceptual_weight > 0`, the perceptual
             loss will be calculated and the loss will multiplied by the
             weight. Default: 1.0.
-        style_weight (float): If `style_weight > 0`, the style loss will be
-            calculated and the loss will multiplied by the weight.
-            Default: 1.0.
         norm_img (bool): If True, the image will be normed to [0, 1]. Note that
             this is different from the `use_input_norm` which norm the input in
             in forward function of vgg according to the statistics of dataset.
@@ -129,14 +126,12 @@ class PerceptualLoss(nn.Module):
                  vgg_type='vgg19',
                  use_input_norm=True,
                  perceptual_weight=1.0,
-                 style_weight=1.0,
                  norm_img=True,
                  pretrained='torchvision://vgg19',
                  criterion='l1'):
         super().__init__()
         self.norm_img = norm_img
         self.perceptual_weight = perceptual_weight
-        self.style_weight = style_weight
         self.layer_weights = layer_weights
         self.vgg = PerceptualVGG(
             layer_name_list=list(layer_weights.keys()),
@@ -173,42 +168,13 @@ class PerceptualLoss(nn.Module):
         gt_features = self.vgg(gt.detach())
 
         # calculate perceptual loss
-        if self.perceptual_weight > 0:
-            percep_loss = 0
-            for k in x_features.keys():
-                percep_loss += self.criterion(
-                    x_features[k], gt_features[k]) * self.layer_weights[k]
-            percep_loss *= self.perceptual_weight
-        else:
-            percep_loss = None
+        percep_loss = 0
+        for k in x_features.keys():
+            percep_loss += self.criterion(
+                x_features[k], gt_features[k]) * self.layer_weights[k]
+        percep_loss *= self.perceptual_weight
 
-        # calculate style loss
-        if self.style_weight > 0:
-            style_loss = 0
-            for k in x_features.keys():
-                style_loss += self.criterion(
-                    self._gram_mat(x_features[k]),
-                    self._gram_mat(gt_features[k])) * self.layer_weights[k]
-            style_loss *= self.style_weight
-        else:
-            style_loss = None
-
-        return percep_loss, style_loss
-
-    def _gram_mat(self, x):
-        """Calculate Gram matrix.
-
-        Args:
-            x (torch.Tensor): Tensor with shape of (n, c, h, w).
-
-        Returns:
-            torch.Tensor: Gram matrix.
-        """
-        (n, c, h, w) = x.size()
-        features = x.view(n, c, w * h)
-        features_t = features.transpose(1, 2)
-        gram = features.bmm(features_t) / (c * h * w)
-        return gram
+        return percep_loss
 
 
 @LOSSES.register_module()
