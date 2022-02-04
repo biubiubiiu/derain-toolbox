@@ -2,10 +2,9 @@
 # Modified by Raymond Wong
 
 import os.path as osp
+import random
 from pathlib import Path
 from typing import Callable, Dict, List, Union
-
-import numpy as np
 
 from .base_derain_dataset import BaseDerainDataset
 from .registry import DATASETS
@@ -76,7 +75,7 @@ class DerainUnpairedDataset(BaseDerainDataset):
             dict: Prepared training data batch.
         """
         img_a_path = self.data_infos_a[idx % self.len_a]['path']
-        idx_b = np.random.randint(0, self.len_b)
+        idx_b = random.randrange(0, self.len_b)
         img_b_path = self.data_infos_b[idx_b]['path']
         results = dict(img_a_path=img_a_path, img_b_path=img_b_path)
         return results
