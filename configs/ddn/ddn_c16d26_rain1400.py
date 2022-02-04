@@ -1,4 +1,4 @@
-# An example usage of `DerainMultipleLQDataset` for Rain1400 training
+# An example usage of `DerainFilenameMatchingDataset` for Rain1400 training
 
 exp_name = 'ddn_c16d26_rain1400'
 work_dir = f'./work_dirs/{exp_name}'
@@ -21,8 +21,8 @@ train_cfg = None
 test_cfg = dict(metrics=['PSNR', 'SSIM'])
 
 # dataset settings
-train_dataset_type = 'DerainMultipleLQDataset'
-val_dataset_type = 'DerainMultipleLQDataset'
+train_dataset_type = 'DerainFilenameMatchingDataset'
+val_dataset_type = 'DerainFilenameMatchingDataset'
 train_pipeline = [
     dict(type='LoadImageFromFile', key='lq'),
     dict(type='LoadImageFromFile', key='gt'),
