@@ -1,10 +1,6 @@
-## Introduction
+# Derain-toolbox
 
 This is a single image deraining toolbox based on [PyTorch](https://github.com/pytorch/pytorch) and [mmcv](https://github.com/open-mmlab/mmcv). Some benchmark algorithms for single image deraining are reimplemented in this repo, which are migrated from their official code or reproduced based on their papers (for those have no publicly available code). Experiments of these algorithms are also carried out again, including evalution on benchmark datasets (Rain200L, Rain200H, Rain800, Rain1200 and Rain1400) and tests of network complexity. The results are reported in the corresponding `README` files.
-
-## Get Started
-
-See [getting_started.md](docs/getting_started.md) for the basic usage of mmderain.
 
 ## Model Zoo
 
@@ -17,9 +13,25 @@ See [getting_started.md](docs/getting_started.md) for the basic usage of mmderai
 - [RCDNet](configs/rcdnet/README.md) (CVPR' 2020) \[[paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Wang_A_Model-Driven_Deep_Neural_Network_for_Single_Image_Rain_Removal_CVPR_2020_paper.html)\] \[[code](https://github.com/hongwang01/RCDNet_simple)\]
 - [DualGCN](configs/dual_gcn/README.md) (AAAI' 2021) \[[paper](https://ojs.aaai.org/index.php/AAAI/article/view/16224)\] \[[code](https://xueyangfu.github.io/paper/2021/AAAI/code.zip)\]
 
+## Installation
+
+See [installation instructions](docs/installation.md)
+
+## Getting Started
+
+See [getting_started.md](docs/getting_started.md) for the basic usage of derain-toolbox.
+
 ## Credits
 
 Portions of this project utilized other open-source works, the use of which is listed acknowledged in [CREDITS.md](CREDITS.md).
+
+## Contributions
+
+If you've found an error in this project, please file an issue.
+
+Patches are encouraged and may be submitted by forking this project and
+submitting a pull request. Since this project is still in its very early stages,
+if your change is substantial, please raise an issue first to discuss it.
 
 ## License
 
