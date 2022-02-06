@@ -3,6 +3,7 @@ from .ddn import DDN
 from .derainnet import DerainNet
 from .drdnet import DRDNet
 from .dual_gcn import DualGCN
+from .oucdnet import OUCDNet
 from .physical_model_guided import PhysicalModelGuided
 from .prenet import PRN, PReNet
 from .rcdnet import RCDNet
@@ -11,5 +12,5 @@ from .rescan import RESCAN
 __all__ = [
     'DDN', 'RESCAN', 'DCSFN', 'DerainNet',
     'DRDNet', 'DualGCN', 'PRN', 'PReNet',
-    'RCDNet', 'PhysicalModelGuided'
+    'RCDNet', 'PhysicalModelGuided', 'OUCDNet'
 ]
