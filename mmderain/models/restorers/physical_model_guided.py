@@ -87,7 +87,7 @@ class PhysicalModelGuided(BaseModel):
 
         w0, w1, w2, w3 = self.loss_weight
 
-        losses['loss_rain'] = w0 * self.loss(R_hat, gt-lq)
+        losses['loss_rain'] = w0 * self.loss(R_hat, lq-gt)
         losses['loss_bg'] = w1 * self.loss(B_hat, gt)
         losses['loss_bg_refine'] = w2 * self.loss(B_refine, gt)
         losses['loss_cycle'] = w3 * self.loss(R_hat+B_hat, lq)

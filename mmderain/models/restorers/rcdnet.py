@@ -88,7 +88,8 @@ class RCDNet(BaseModel):
 
         w0, w1 = self.loss_weight
         loss_B = w0 * sum([self.loss(B, gt) for B in listB[:-1]]) + w1 * self.loss(listB[-1], gt)
-        loss_R = w0 * sum([self.loss(R, gt-lq) for R in listR[:-1]]) + w1 * self.loss(listR[-1], gt-lq)
+        loss_R = w0 * sum([self.loss(R, lq-gt) for R in listR[:-1]]) + \
+            w1 * self.loss(listR[-1], lq-gt)
 
         loss = loss_B+loss_R
         losses['loss'] = loss
