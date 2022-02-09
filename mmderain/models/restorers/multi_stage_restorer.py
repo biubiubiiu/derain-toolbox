@@ -67,6 +67,26 @@ class MultiStageRestorer(BaseModel):
         """
         self.generator.init_weights(pretrained)
 
+    def restore_shape(self, outputs, meta):
+        """Restore the predicted images to the original shape.
+
+        Args:
+            pred (Tensor): The predicted tensor with shape (n, c, h, w).
+            meta (list[dict]): Meta data about the current data batch.
+                Currently only batch_size 1 is supported.
+
+        Returns:
+            np.ndarray: The reshaped predicted image.
+        """
+
+        def _restore_shape(pred, meta):
+            ori_h, ori_w = meta[0]['lq_ori_shape'][:2]
+            pred = pred[:, :, :ori_h, :ori_w]
+            return pred
+
+        outputs = [_restore_shape(it, meta) for it in outputs]
+        return outputs
+
     @auto_fp16(apply_to=('lq', ))
     def forward(self, lq, gt=None, test_mode=False, **kwargs):
         """Forward function.
@@ -161,6 +181,14 @@ class MultiStageRestorer(BaseModel):
             dict: Output results.
         """
         outputs = self.generator(lq)
+
+        if outputs is torch.Tensor:
+            outputs = [outputs]
+
+        if meta is not None and 'pad' in meta[0]:
+            outputs = self.restore_shape(outputs, meta)
+            lq = self.restore_shape(lq, meta)
+
         if self.test_cfg is not None and self.test_cfg.get('metrics', None):
             assert gt is not None, (
                 'evaluation with metrics must have gt images.')
