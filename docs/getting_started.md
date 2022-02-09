@@ -8,7 +8,7 @@ For a tutorial that involves actual coding with the API, see our Colab Notebook 
 
 Two scripts in "train.py" and "dist_train.sh" are made to train all the configs provided in this repo. You may want to use it as a reference to write your own training script.
 
-To train a model, first setup the corresponding datasets following [dataset_preparation](dataset_preparation.md), then run:
+To train a model, first setup the corresponding datasets following [dataset preparation](dataset_preparation.md), then run:
 
 ```bash
 # single-gpu training

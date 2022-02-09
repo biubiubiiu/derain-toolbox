@@ -21,11 +21,11 @@ See [installation instructions](docs/installation.md)
 
 ## Getting Started
 
-See [getting_started.md](docs/getting_started.md) for the basic usage of derain-toolbox.
+See [getting started](docs/getting_started.md) for the basic usage of derain-toolbox.
 
 ## Credits
 
-Portions of this project utilized other open-source works, the use of which is listed acknowledged in [CREDITS.md](CREDITS.md).
+Portions of this project utilized other open-source works, the use of which is listed acknowledged in [CREDITS](CREDITS.md).
 
 ## Contributions
 
