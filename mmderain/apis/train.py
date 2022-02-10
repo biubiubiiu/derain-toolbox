@@ -161,9 +161,14 @@ def _dist_train(model,
     # an ugly walkaround to make the .log and .log.json filenames the same
     runner.timestamp = timestamp
 
+    optimizer_config = cfg.get('optimizer_config', None)
+    if optimizer_config is not None and isinstance(optimizer, dict):
+        raise ValueError('For now, optimizer_config is only supported with single optimizer')
+
     # register hooks
     runner.register_training_hooks(
         cfg.lr_config,
+        optimizer_config,
         checkpoint_config=cfg.checkpoint_config,
         log_config=cfg.log_config)
 
@@ -298,9 +303,14 @@ def _non_dist_train(model,
     # an ugly walkaround to make the .log and .log.json filenames the same
     runner.timestamp = timestamp
 
+    optimizer_config = cfg.get('optimizer_config', None)
+    if optimizer_config is not None and isinstance(optimizer, dict):
+        raise ValueError('For now, optimizer_config is only supported with single optimizer')
+
     # register hooks
     runner.register_training_hooks(
         cfg.lr_config,
+        optimizer_config,
         checkpoint_config=cfg.checkpoint_config,
         log_config=cfg.log_config)
 
