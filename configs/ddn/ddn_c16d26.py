@@ -79,8 +79,8 @@ data = dict(
 )
 
 # optimizer
-optimizers = dict(generator=dict(type='SGD', lr=1e-1,
-                  weight_decay=1e-10, momentum=0.9))
+optimizers = dict(type='SGD', lr=1e-1, weight_decay=1e-10, momentum=0.9)
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 total_iters = 210000

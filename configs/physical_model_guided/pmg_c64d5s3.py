@@ -82,6 +82,7 @@ data = dict(
 
 # optimizer
 optimizers = dict(type='Adam', lr=5e-4, betas=(0.9, 0.999))
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 runner = dict(type='EpochBasedRunner', max_epochs=200)  # reduce from 2000 to 200

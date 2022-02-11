@@ -83,7 +83,8 @@ data = dict(
 )
 
 # optimizer
-optimizers = dict(generator=dict(type='Adam', lr=5e-3, betas=(0.9, 0.999)))
+optimizers = dict(type='Adam', lr=5e-3, betas=(0.9, 0.999))
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 total_iters = 20000

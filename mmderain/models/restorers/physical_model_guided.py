@@ -193,12 +193,7 @@ class PhysicalModelGuided(BaseModel):
         outputs = self(**data_batch, test_mode=False)
         loss, log_vars = self.parse_losses(outputs.pop('losses'))
 
-        # optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        outputs.update({'log_vars': log_vars})
+        outputs.update({'loss': loss, 'log_vars': log_vars})
         return outputs
 
     def val_step(self, data_batch, **kwargs):

@@ -63,6 +63,7 @@ data = dict(
 
 # optimizer
 optimizers = dict(type='Adam', lr=1e-3, betas=(0.9, 0.999))
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 iters_per_round = 1500

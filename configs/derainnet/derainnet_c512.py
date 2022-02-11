@@ -79,11 +79,12 @@ data = dict(
 )
 
 # optimizer
-optimizers = dict(generator=dict(type='Adam', lr=1e-3, betas=(0.9, 0.999)))
-lr_config = None
+optimizers = dict(type='Adam', lr=1e-3, betas=(0.9, 0.999))
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 total_iters = 200000
+lr_config = None
 
 checkpoint_config = dict(interval=20000, save_optimizer=True, by_epoch=False)
 evaluation = dict(interval=50000, save_image=True, by_epoch=False)

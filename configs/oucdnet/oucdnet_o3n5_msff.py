@@ -96,7 +96,8 @@ data = dict(
 )
 
 # optimizer
-optimizers = dict(generator=dict(type='Adam', lr=2e-4, betas=(0.9, 0.999)))
+optimizers = dict(type='Adam', lr=2e-4, betas=(0.9, 0.999))
+optimizer_config = dict(grad_clip=None)
 
 # learning policy
 runner = dict(type='EpochBasedRunner', max_epochs=200)
