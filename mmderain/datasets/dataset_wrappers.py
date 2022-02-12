@@ -1,6 +1,3 @@
-# This code is taken from https://github.com/open-mmlab/mmediting
-# Modified by Raymond Wong
-
 import itertools
 from collections import defaultdict
 
