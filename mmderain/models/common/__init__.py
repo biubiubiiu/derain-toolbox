@@ -1,6 +1,7 @@
-from .guided_filter import GuidedFilter2d, FastGuidedFilter2d
+from .guided_filter import FastGuidedFilter2d, GuidedFilter2d
+from .model_utils import set_requires_grad
 from .utils import make_layer
 
 __all__ = [
-    'GuidedFilter2d', 'FastGuidedFilter2d', 'make_layer'
+    'FastGuidedFilter2d', 'GuidedFilter2d', 'set_requires_grad', 'make_layer'
 ]
