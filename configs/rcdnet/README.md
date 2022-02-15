@@ -27,7 +27,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |                        Method                         |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
 | :---------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
-| [rcdnet_c32s17n4](/configs/rcdnet/rcdnet_c32s17n4.py) | 38.66/0.985 | 28.73/0.885 | 27.46/0.867 | 32.24/0.908 | 31.02/0.914 |
+| [rcdnet_c32s17n4](/configs/rcdnet/rcdnet_c32s17n4.py) | 39.14/0.986 | 29.43/0.900 | 27.75/0.872 | 32.62/0.917 | 31.28/0.919 |
 
 <br/>
 
@@ -36,3 +36,5 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 |  Input shape  |    Flops     | Params |
 | :-----------: | :----------: | :----: |
 | (3, 256, 256) | 194.54GFlops | 2.97M  |
+
+> **Help Wanted**: The results obtained from `test.py` deviates from the true value. It is speculated that the network weights has not been saved correctly. The experimental results given above are from the evaluation process of the last epoch (by checking log files). The evaluation process, which is called from `EvalHook`, differs from the testing process of `test.py` in that it loads the network weights in memory directly, without going through the serialization process.
