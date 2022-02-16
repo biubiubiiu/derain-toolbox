@@ -15,6 +15,11 @@ model = dict(
         dict(type='MSELoss', loss_weight=0.1, reduction='mean', idx=0),
         dict(type='MSELoss', loss_weight=1.0, reduction='mean', idx=1),
     ],
+    init_cfg=[
+        dict(type='Kaiming', layer='Conv2d', distribution='normal',
+             a=0, mode='fan_in', nonlinearity='leaky_relu'),
+        dict(type='Constant', layer='BatchNorm2d', val=1.0, bias=0.0),
+    ]
 )
 
 # model training and testing settings

@@ -2,7 +2,6 @@ import numbers
 import os.path as osp
 
 import mmcv
-from mmcv.runner import auto_fp16
 
 from mmderain.core import crop_border, psnr, ssim, tensor2img
 
@@ -31,47 +30,18 @@ class RCDNet(BaseModel):
                  loss_weight,
                  train_cfg=None,
                  test_cfg=None,
-                 pretrained=None):
-        super().__init__()
+                 init_cfg=None):
+        super().__init__(init_cfg)
 
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
 
-        # support fp16
-        self.fp16_enabled = False
-
         # generator
         self.generator = build_backbone(model_cfg)
-        self.init_weights(pretrained)
 
         # loss
         self.loss = build_loss(pixel_loss)
         self.loss_weight = loss_weight
-
-    def init_weights(self, pretrained=None):
-        """Init weights for models.
-
-        Args:
-            pretrained (str, optional): Path for pretrained weights. If given
-                None, pretrained weights will not be loaded. Defaults to None.
-        """
-        self.generator.init_weights(pretrained)
-
-    @auto_fp16(apply_to=('lq', ))
-    def forward(self, lq, gt=None, test_mode=False, **kwargs):
-        """Forward function.
-
-        Args:
-            lq (Tensor): Input lq images.
-            gt (Tensor): Ground-truth image. Default: None.
-            test_mode (bool): Whether in test mode or not. Default: False.
-            kwargs (dict): Other arguments.
-        """
-
-        if test_mode:
-            return self.forward_test(lq, gt, **kwargs)
-
-        return self.forward_train(lq, gt)
 
     def forward_train(self, lq, gt):
         """Training forward function.
@@ -183,32 +153,3 @@ class RCDNet(BaseModel):
         """
         listB, _ = self.generator(img)
         return listB[-1]
-
-    def train_step(self, data_batch, optimizer):
-        """Train step.
-
-        Args:
-            data_batch (dict): A batch of data.
-            optimizer (obj): Optimizer.
-
-        Returns:
-            dict: Returned output.
-        """
-        outputs = self(**data_batch, test_mode=False)
-        loss, log_vars = self.parse_losses(outputs.pop('losses'))
-
-        outputs.update({'loss': loss, 'log_vars': log_vars})
-        return outputs
-
-    def val_step(self, data_batch, **kwargs):
-        """Validation step.
-
-        Args:
-            data_batch (dict): A batch of data.
-            kwargs (dict): Other arguments for ``val_step``.
-
-        Returns:
-            dict: Returned output.
-        """
-        output = self.forward_test(**data_batch, **kwargs)
-        return output

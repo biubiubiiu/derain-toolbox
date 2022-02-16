@@ -1,11 +1,10 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 import torch
-from mmcv.runner import load_checkpoint
+from torch import nn
+
 from mmderain.models.layers import SELayer
 from mmderain.models.registry import BACKBONES
-from mmderain.utils import get_root_logger
-from torch import nn
 
 
 class DCCL(nn.Module):
@@ -115,27 +114,3 @@ class DRDNet(nn.Module):
         out2 = x - rain + bg
 
         return out1, out2
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            for m in self.modules():
-                if isinstance(m, nn.Conv2d):
-                    nn.init.kaiming_normal_(m.weight)
-                    if m.bias is not None:
-                        nn.init.constant_(m.bias, 0)
-                elif isinstance(m, nn.BatchNorm2d):
-                    nn.init.constant_(m.weight, 1)
-                    nn.init.constant_(m.bias, 0)
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")

@@ -1,78 +1,104 @@
-# This code is taken from https://github.com/open-mmlab/mmediting
-# Modified by Raymond Wong
-
 from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
+from typing import Sequence
 
 import torch
-import torch.nn as nn
+from mmcv.runner import BaseModule, auto_fp16
 
 
-class BaseModel(nn.Module, metaclass=ABCMeta):
+class BaseModel(BaseModule, metaclass=ABCMeta):
     """Base model.
 
     All models should subclass it.
     All subclass should overwrite:
-
-        ``init_weights``, supporting to initialize models.
-
         ``forward_train``, supporting to forward when training.
 
         ``forward_test``, supporting to forward when testing.
-
-        ``train_step``, supporting to train one step when training.
     """
 
-    @abstractmethod
-    def init_weights(self):
-        """Abstract method for initializing weight.
+    def __init__(self, init_cfg=None):
+        super(BaseModel, self).__init__(init_cfg)
 
-        All subclass should overwrite it.
-        """
+        # support fp16
+        self.fp16_enabled = False
 
     @abstractmethod
-    def forward_train(self, imgs, labels):
+    def forward_train(self, lq, gt):
         """Abstract method for training forward.
 
         All subclass should overwrite it.
         """
 
     @abstractmethod
-    def forward_test(self, imgs):
+    def forward_test(self, lq, gt=None):
         """Abstract method for testing forward.
 
         All subclass should overwrite it.
         """
 
-    def forward(self, imgs, labels, test_mode, **kwargs):
-        """Forward function for base model.
+    @auto_fp16(apply_to=('lq', ))
+    def forward(self, lq, gt=None, test_mode=False, **kwargs):
+        """Forward function. Calls either :func:`forward_train` or
+        :func:`forward_test` depending on whether ``test_mode`` is ``True``
 
         Args:
-            imgs (Tensor): Input image(s).
-            labels (Tensor): Ground-truth label(s).
-            test_mode (bool): Whether in test mode.
+            lq (Tensor): Input lq images.
+            gt (Tensor): Ground-truth image. Default: None.
+            test_mode (bool): Whether in test mode or not. Default: False.
             kwargs (dict): Other arguments.
-
-        Returns:
-            Tensor: Forward results.
         """
 
         if test_mode:
-            return self.forward_test(imgs, **kwargs)
+            return self.forward_test(lq, gt, **kwargs)
 
-        return self.forward_train(imgs, labels, **kwargs)
+        return self.forward_train(lq, gt)
 
-    @abstractmethod
     def train_step(self, data_batch, optimizer):
-        """Abstract method for one training step.
+        """The iteration step during training.
 
-        All subclass should overwrite it.
+        This method defines an iteration step during training, except for the
+        back propagation and optimizer updating, which are done in an optimizer
+        hook. Note that in some complicated cases or models, the whole process
+        including back propagation and optimizer updating is also defined in
+        this method, such as GAN.
+
+        Args:
+            data_batch (dict): A batch of data.
+            optimizer (:obj:`torch.optim.Optimizer` | dict): The optimizer of
+                runner is passed to ``train_step()``. This argument is unused
+                and reserved.
+
+        Returns:
+            dict: It should contain at least 3 keys: ``loss``, ``log_vars``, \
+                ``num_samples``.
+
+                - ``loss`` is a tensor for back propagation, which can be a
+                  weighted sum of multiple losses.
+                - ``log_vars`` contains all the variables to be sent to the
+                  logger.
+                - ``num_samples`` indicates the batch size (when the model is
+                  DDP, it means the batch size on each GPU), which is used for
+                  averaging the logs.
         """
+        outputs = self(**data_batch, test_mode=False)
+        loss, log_vars = self.parse_losses(outputs.pop('losses'))
+
+        outputs.update({'loss': loss, 'log_vars': log_vars})
+        return outputs
 
     def val_step(self, data_batch, **kwargs):
-        """Abstract method for one validation step.
+        """The iteration step during validation.
 
-        All subclass should overwrite it.
+        This method shares a similar signature as :func:`train_step`, but used
+        during val epochs. Note that the evaluation after training epochs is
+        not implemented with this method, but an evaluation hook.
+
+        Args:
+            data_batch (dict): A batch of data.
+            kwargs (dict): Other arguments for ``val_step``.
+
+        Returns:
+            dict: Returned output.
         """
         output = self.forward_test(**data_batch, **kwargs)
         return output
@@ -105,3 +131,27 @@ class BaseModel(nn.Module, metaclass=ABCMeta):
             log_vars[name] = log_vars[name].item()
 
         return loss, log_vars
+
+    def restore_shape(self, outputs, meta):
+        """Restore the predicted images to the original shape.
+
+        Args:
+            pred (Tensor): The predicted tensor with shape (n, c, h, w).
+            meta (list[dict]): Meta data about the current data batch.
+                Currently only batch_size 1 is supported.
+
+        Returns:
+            np.ndarray: The reshaped predicted image.
+        """
+
+        def _restore_shape(pred, meta):
+            ori_h, ori_w = meta[0]['lq_ori_shape'][:2]
+            pred = pred[:, :, :ori_h, :ori_w]
+            return pred
+
+        if outputs is torch.Tensor:
+            return _restore_shape(outputs, meta)
+        elif outputs is Sequence:
+            return [_restore_shape(it, meta) for it in outputs]
+        else:
+            raise TypeError(f'Unexpected type of outputs: {type(outputs)}')

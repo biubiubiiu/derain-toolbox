@@ -3,11 +3,10 @@ from typing import List, Optional, Sequence, Tuple
 
 import torch
 import torch.nn.functional as F
-from mmcv.runner import load_checkpoint
-from mmderain.models.registry import BACKBONES
-from mmderain.utils import get_root_logger
-from mmderain.utils.functools import zip_with_next
 from torch import nn
+
+from mmderain.models.registry import BACKBONES
+from mmderain.utils.functools import zip_with_next
 
 
 class MSFF(nn.Module):
@@ -191,20 +190,3 @@ class OUCDNet(nn.Module):
         out = feat_overcomplete[-1] + feat_undercomplete[-1]
         out = self.last(out)
         return out
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            pass  # use default initialization
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")

@@ -1,13 +1,12 @@
 from functools import partial
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import torch
 import torch.nn.functional as F
-from mmcv.runner import load_checkpoint
+from torch import nn
+
 from mmderain.models.common import make_layer
 from mmderain.models.registry import BACKBONES
-from mmderain.utils import get_root_logger
-from torch import nn
 
 
 def sizeof(x: torch.Tensor) -> Tuple[int]:
@@ -189,20 +188,3 @@ class PhysicalModelGuided(nn.Module):
         B_hat = self.rain_free_net(x)
         B_refine = self.guided_learning_net(torch.cat([R_hat, B_hat], dim=1))
         return R_hat, B_hat, B_refine
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            pass  # use default initialization
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")

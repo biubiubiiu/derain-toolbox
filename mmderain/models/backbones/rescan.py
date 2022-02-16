@@ -2,12 +2,10 @@ from functools import partial
 from typing import List, Optional, Tuple, Union
 
 import torch
-from mmcv.runner import load_checkpoint
 from torch import nn
 
 from mmderain.models.layers import RESCAN_GRU, RESCAN_LSTM, RESCAN_RNN, SELayer
 from mmderain.models.registry import BACKBONES
-from mmderain.utils import get_root_logger
 
 
 class RecurrentUnit(nn.Module):
@@ -132,20 +130,3 @@ class RESCAN(nn.Module):
         # which holds that \sum (R-R_i)^2 = \sum(O-B-(O-B_i))^2 = \sum (B-B_i)^2
         # For simplicity, returns estimates of backgrounds instead of rains here
         return bg_estimates
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            pass  # use default initialization
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")

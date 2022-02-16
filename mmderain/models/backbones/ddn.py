@@ -1,9 +1,6 @@
 import torch
 from torch import nn
-from mmcv.runner import load_checkpoint
-from typing import Optional
 
-from mmderain.utils import get_root_logger
 from mmderain.models.common import GuidedFilter2d
 from mmderain.models.registry import BACKBONES
 
@@ -74,27 +71,3 @@ class DDN(nn.Module):
 
         out = self.layer3(out)
         return x + out
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            for m in self.modules():
-                if isinstance(m, nn.Conv2d):
-                    nn.init.xavier_uniform_(m.weight)
-                    if m.bias is not None:
-                        nn.init.constant_(m.bias, 0)
-                elif isinstance(m, nn.BatchNorm2d):
-                    nn.init.constant_(m.weight, 1)
-                    nn.init.constant_(m.bias, 0)
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")

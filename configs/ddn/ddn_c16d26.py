@@ -12,6 +12,10 @@ model = dict(
         num_blocks=24,
     ),
     losses=[dict(type='MSELoss', loss_weight=1.0, reduction='mean')],
+    init_cfg=[
+        dict(type='Xavier', layer='Conv2d', distribution='uniform', gain=1.0),
+        dict(type='Constant', layer='BatchNorm2d', val=1.0, bias=0.0),
+    ]
 )
 
 # model training and testing settings

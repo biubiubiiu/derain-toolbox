@@ -1,12 +1,8 @@
-from typing import Optional
-
 import torch
-from mmcv.runner import load_checkpoint
 from torch import nn
 
 from mmderain.models.common import GuidedFilter2d
 from mmderain.models.registry import BACKBONES
-from mmderain.utils import get_root_logger
 
 
 @BACKBONES.register_module()
@@ -60,20 +56,3 @@ class DerainNet(nn.Module):
         out = out[:, :, self.padding-4:-self.padding+4, self.padding-4:-self.padding+4]
 
         return out + lf
-
-    def init_weights(self, pretrained: Optional[str], strict: bool = True):
-        """Init weights for models
-
-        Args:
-            pretrained (str | optional): Path to the pretrained model.
-            strict (bool): Whether strictly load the pretrained model.
-                Defaults to True.
-        """
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=strict, logger=logger)
-        elif pretrained is None:
-            pass  # use default initialization
-        else:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f"But received {type(pretrained)}.")
