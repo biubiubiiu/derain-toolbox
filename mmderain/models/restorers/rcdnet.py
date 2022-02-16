@@ -167,7 +167,8 @@ class RCDNet(BaseModel):
             else:
                 raise ValueError('iteration should be number or None, '
                                  f'but got {type(iteration)}')
-            mmcv.imwrite(tensor2img(output, min_max=(0, 255)), save_path)
+            save_img = mmcv.rgb2bgr(tensor2img(output, min_max=(0, 255)))
+            mmcv.imwrite(save_img, save_path)
 
         return results
 
