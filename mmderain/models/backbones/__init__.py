@@ -1,3 +1,4 @@
+from .cgan import IDDiscriminator, IDGenerator
 from .dcsfn import DCSFN
 from .ddn import DDN
 from .derainnet import DerainNet
@@ -12,5 +13,6 @@ from .rescan import RESCAN
 __all__ = [
     'DDN', 'RESCAN', 'DCSFN', 'DerainNet',
     'DRDNet', 'DualGCN', 'PRN', 'PReNet',
-    'RCDNet', 'PhysicalModelGuided', 'OUCDNet'
+    'RCDNet', 'PhysicalModelGuided', 'OUCDNet', 'IDGenerator',
+    'IDDiscriminator'
 ]
