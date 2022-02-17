@@ -20,7 +20,7 @@ class PhysicalModelGuided(BaseModel):
         model_cfg (dict): Config for the generator structure.
         pixel_loss (dict): Config for pixel-wise loss.
         loss_weight (tuple[float]): Loss weight for L_{rain}, L_{rainfree}, L_{guide} and L_{p}
-        pretrained (str): Path for pretrained model. Default: None.
+        init_cfg: (dict or list[dict], optional): Initialization config dict. Default: None.
     """
     allowed_metrics = {'PSNR': psnr, 'SSIM': ssim}
 

@@ -18,18 +18,12 @@ from ..registry import MODELS
 class BasicRestorer(BaseModel):
     """Basic model for image restoration.
 
-    It must contain a generator that takes an image as inputs and outputs a
-    restored image. It also has a pixel-wise loss for training.
-
-    The subclasses should overwrite the function `forward_train`,
-    `forward_test` and `train_step`.
-
     Args:
         generator (dict): Config for the generator structure.
         losses (List[dict]): A list of configs for building losses.
         train_cfg (dict): Config for training. Default: None.
         test_cfg (dict): Config for testing. Default: None.
-        pretrained (str): Path for pretrained model. Default: None.
+        init_cfg: (dict or list[dict], optional): Initialization config dict. Default: None.
     """
     allowed_metrics = {'PSNR': psnr, 'SSIM': ssim}
 

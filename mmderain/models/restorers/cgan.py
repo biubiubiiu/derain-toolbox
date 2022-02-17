@@ -26,7 +26,7 @@ class IDCGAN(BaseModel):
         perceptual_loss (dict): Config for the perceptual loss. Default: None.
         train_cfg (dict): Config for training. Default: None.
         test_cfg (dict): Config for testing. Default: None.
-        pretrained (str): Path for pretrained model. Default: None.
+        init_cfg: (dict or list[dict], optional): Initialization config dict. Default: None.
     """
     allowed_metrics = {'PSNR': psnr, 'SSIM': ssim}
 

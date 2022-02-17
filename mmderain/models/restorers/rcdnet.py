@@ -20,7 +20,7 @@ class RCDNet(BaseModel):
         model_cfg (dict): Config for the generator structure.
         pixel_loss (dict): Config for pixel-wise loss.
         loss_weight (tuple[float]): Loss weight for intermediate output and final output
-        pretrained (str): Path for pretrained model. Default: None.
+        init_cfg: (dict or list[dict], optional): Initialization config dict. Default: None.
     """
     allowed_metrics = {'PSNR': psnr, 'SSIM': ssim}
 
