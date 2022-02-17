@@ -563,3 +563,5 @@
 </details>
 
 &nbsp;
+
+**LaplacianLoss-pytorch** \[[homepage](https://github.com/gonglixue/LaplacianLoss-pytorch)\]
