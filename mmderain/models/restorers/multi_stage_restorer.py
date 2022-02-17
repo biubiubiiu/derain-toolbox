@@ -39,7 +39,7 @@ class MultiStageRestorer(BaseModel):
                  train_cfg=None,
                  test_cfg=None,
                  init_cfg=None):
-        super().__init__()
+        super().__init__(init_cfg)
 
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
