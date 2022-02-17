@@ -149,9 +149,9 @@ class BaseModel(BaseModule, metaclass=ABCMeta):
             pred = pred[:, :, :ori_h, :ori_w]
             return pred
 
-        if outputs is torch.Tensor:
+        if isinstance(outputs, torch.Tensor):
             return _restore_shape(outputs, meta)
-        elif outputs is Sequence:
+        elif isinstance(outputs, Sequence):
             return [_restore_shape(it, meta) for it in outputs]
         else:
             raise TypeError(f'Unexpected type of outputs: {type(outputs)}')
