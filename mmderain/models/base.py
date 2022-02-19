@@ -5,6 +5,8 @@ from typing import Sequence
 import torch
 from mmcv.runner import BaseModule, auto_fp16
 
+from mmderain.core import crop_border, tensor2img
+
 
 class BaseModel(BaseModule, metaclass=ABCMeta):
     """Base model.
@@ -155,3 +157,26 @@ class BaseModel(BaseModule, metaclass=ABCMeta):
             return [_restore_shape(it, meta) for it in outputs]
         else:
             raise TypeError(f'Unexpected type of outputs: {type(outputs)}')
+
+    def evaluate(self, output, gt):
+        """Evaluation function.
+
+        Args:
+            output (Tensor): Model output with shape (n, c, h, w).
+            gt (Tensor): GT Tensor with shape (n, c, h, w).
+
+        Returns:
+            dict: Evaluation results.
+        """
+        output = tensor2img(output)
+        gt = tensor2img(gt)
+
+        if hasattr(self.test_cfg, 'crop_border'):
+            output = crop_border(output, self.test_cfg.crop_border)
+            gt = crop_border(gt, self.test_cfg.crop_border)
+
+        eval_result = dict()
+        for metric in self.test_cfg.metrics:
+            eval_result[metric] = self.allowed_metrics[metric](output, gt)
+
+        return eval_result

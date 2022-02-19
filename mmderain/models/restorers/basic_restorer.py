@@ -7,7 +7,7 @@ import os.path as osp
 import mmcv
 from torch import nn
 
-from mmderain.core import crop_border, psnr, ssim, tensor2img
+from mmderain.core import psnr, ssim, tensor2img
 
 from ..base import BaseModel
 from ..builder import build_backbone, build_loss
@@ -68,29 +68,6 @@ class BasicRestorer(BaseModel):
             num_samples=len(gt.data),
             results=dict(lq=lq.cpu(), gt=gt.cpu(), output=output.cpu()))
         return outputs
-
-    def evaluate(self, output, gt):
-        """Evaluation function.
-
-        Args:
-            output (Tensor): Model output with shape (n, c, h, w).
-            gt (Tensor): GT Tensor with shape (n, c, h, w).
-
-        Returns:
-            dict: Evaluation results.
-        """
-        output = tensor2img(output)
-        gt = tensor2img(gt)
-
-        if hasattr(self.test_cfg, 'crop_border'):
-            output = crop_border(output, self.test_cfg.crop_border)
-            gt = crop_border(gt, self.test_cfg.crop_border)
-
-        eval_result = dict()
-        for metric in self.test_cfg.metrics:
-            eval_result[metric] = self.allowed_metrics[metric](output, gt)
-
-        return eval_result
 
     def forward_test(self,
                      lq,
