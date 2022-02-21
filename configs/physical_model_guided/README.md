@@ -28,15 +28,14 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 > **_NOTE:_**
 >
-> - Following the authors' setup, random seed is set to 66 in all experiments.
 > - Due to limited computation resource and limited time:
 >   - batch size is reduced from 32 to 4
 >   - patch size is reduced from 160\*160 to 128\*218
 >   - training epochs is reduced from 2000 to 200
 
-|                            Method                            |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
-| :----------------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
-| [pmg_c64d5s3](/configs/physical_model_guided/pmg_c64d5s3.py) | 36.93/0.979 | 28.04/0.878 | 26.15/0.854 | 33.10/0.922 | 31.39/0.919 |
+|                            Method                            |  Rain200L   |  Rain200H   |   Rain800   | Rain1200 |  Rain1400   |
+| :----------------------------------------------------------: | :---------: | :---------: | :---------: | :------: | :---------: |
+| [pmg_c64d5s3](/configs/physical_model_guided/pmg_c64d5s3.py) | 37.21/0.980 | 27.91/0.878 | 26.28/0.854 | unstable | 31.38/0.919 |
 
 <br/>
 
