@@ -52,7 +52,8 @@ class ConvRNN(nn.Module):
 
     def forward(self, x: torch.Tensor, hx: Optional[torch.Tensor] = None) -> torch.Tensor:
         if hx is None:
-            hx = torch.zeros_like(x)
+            b, _, h, w = x.shape
+            hx = torch.zeros((b, self.output_channel, h, w)).to(x)
 
         h_next = self.conv_x(x) + self.conv_h(hx)
         return h_next
@@ -106,7 +107,7 @@ class ConvGRU(nn.Module):
             bias=bias
         )
         self.conv1 = nn.Conv2d(
-            in_channels=output_channel*2,
+            in_channels=input_channel + output_channel,
             out_channels=output_channel,
             kernel_size=kernel_size,
             padding=padding,
@@ -120,7 +121,8 @@ class ConvGRU(nn.Module):
         hx: Optional[torch.Tensor] = None
     ) -> torch.Tensor:
         if hx is None:
-            hx = torch.zeros_like(x)
+            b, _, h, w = x.shape
+            hx = torch.zeros((b, self.output_channel, h, w)).to(x)
 
         combined = torch.cat([x, hx], dim=1)
 
@@ -187,7 +189,8 @@ class ConvLSTM(nn.Module):
         hx: Optional[Tuple[torch.Tensor, torch.Tensor]] = None
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         if hx is None:
-            zeros = torch.zeros_like(x)
+            b, _, h, w = x.shape
+            zeros = torch.zeros((b, self.output_channel, h, w)).to(x)
             hx = (zeros, zeros)
 
         h_cur, c_cur = hx
