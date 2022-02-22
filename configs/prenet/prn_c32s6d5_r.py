@@ -13,8 +13,7 @@ model = dict(
         num_resblocks=5,
         recursive_resblock=True
     ),
-    losses=[dict(type='SSIMLoss', loss_weight=1.0, reduction='mean')],
-    recurrent_loss=False
+    losses=[dict(type='SSIMLoss', loss_weight=1.0, reduction='mean', recurrent=False)],
 )
 
 # model training and testing settings

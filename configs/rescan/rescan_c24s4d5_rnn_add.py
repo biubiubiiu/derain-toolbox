@@ -14,8 +14,7 @@ model = dict(
         recurrent_unit='RNN',
         prediction_type='Additive'
     ),
-    losses=[dict(type='MSELoss', loss_weight=1.0, reduction='mean')],
-    recurrent_loss=True
+    losses=[dict(type='MSELoss', loss_weight=1.0, reduction='mean', recurrent=True)],
 )
 
 # model training and testing settings

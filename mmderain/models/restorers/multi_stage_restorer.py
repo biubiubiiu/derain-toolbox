@@ -3,6 +3,7 @@ import os.path as osp
 
 import mmcv
 import torch
+from torch import nn
 
 from mmderain.core import crop_border, psnr, ssim, tensor2img
 
@@ -18,8 +19,10 @@ class MultiStageRestorer(BaseModel):
     Args:
         generator (dict): Config for the generator structure.
         losses (List[dict]): A list of configs for building losses.
-        recurrent_loss (bool): If `True`, deploy losses on every stage. Else,
-            deploy only on the last stage. Default: `True`
+            For each item, `recurrent` can be specified. If
+            ``true``, the loss would be deployed on every stage.
+            Else, would be deployed only on the last stage.
+            Default: `True`
         train_cfg (dict): Config for training. Default: None.
         test_cfg (dict): Config for testing. Default: None.
         init_cfg: (dict or list[dict], optional): Initialization config dict. Default: None.
@@ -29,7 +32,6 @@ class MultiStageRestorer(BaseModel):
     def __init__(self,
                  generator,
                  losses,
-                 recurrent_loss=True,
                  train_cfg=None,
                  test_cfg=None,
                  init_cfg=None):
@@ -42,11 +44,16 @@ class MultiStageRestorer(BaseModel):
         self.generator = build_backbone(generator)
 
         # loss
-        self.loss = dict()
-        for loss in losses:
-            self.loss[loss['type'].lower()] = build_loss(loss)
-        self.recurrent_loss = recurrent_loss
+        self.loss = nn.ModuleDict()
+        self.loss_info = dict()
 
+        for loss_cfg in losses:
+            name = loss_cfg['type'].lower()
+            recurrent = loss_cfg.pop('recurrent', True)
+            loss = build_loss(loss_cfg)
+
+            self.loss_info[name] = recurrent
+            self.loss[name] = loss
 
     def forward_train(self, lq, gt):
         """Training forward function.
@@ -65,7 +72,8 @@ class MultiStageRestorer(BaseModel):
             outputs = (outputs,)
 
         for name, loss in self.loss.items():
-            if self.recurrent_loss:
+            recurrent = self.loss_info[name]
+            if recurrent:
                 losses[name] = torch.sum(torch.stack(
                     [loss(output, gt) for output in outputs], dim=0), dim=0)
             else:
