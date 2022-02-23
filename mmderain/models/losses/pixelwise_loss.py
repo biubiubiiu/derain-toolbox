@@ -53,6 +53,21 @@ def charbonnier_loss(pred, target, eps=1e-12):
     return torch.sqrt((pred - target)**2 + eps)
 
 
+@masked_loss
+def psnr_loss(pred, target, eps=1e-8):
+    """PSNR loss, given by negative value of PSNR.
+
+    Args:
+        pred (Tensor): Prediction Tensor with shape (n, c, h, w).
+        target ([type]): Target Tensor with shape (n, c, h, w).
+
+    Returns:
+        Tensor: Calculated PSNR loss.
+    """
+    mse = torch.mean((pred - target) ** 2)
+    return 10. * torch.log10(mse + eps)
+
+
 @LOSSES.register_module()
 class L1Loss(nn.Module):
     """L1 (mean absolute error, MAE) loss.
@@ -221,3 +236,54 @@ class MaskedTVLoss(L1Loss):
         loss = x_diff + y_diff
 
         return loss
+
+
+@LOSSES.register_module()
+class PSNRLoss(nn.Module):
+    """PSNR loss.
+
+    Args:
+        loss_weight (float): Loss weight for PSNR loss. Default: 1.0.
+        reduction (str): Specifies the reduction to apply to the output.
+            Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
+        sample_wise (bool): Whether calculate the loss sample-wise. This
+            argument only takes effect when `reduction` is 'mean' and `weight`
+            (argument of `forward()`) is not None. It will first reduces loss
+            with 'mean' per-sample, and then it means over all the samples.
+            Default: False.
+        reciprocal (bool): Whether use the reciprocal of PSNR or not.
+            Default: False.
+    """
+
+    def __init__(self, loss_weight=1.0, reduction='mean', sample_wise=False, reciprocal=False):
+        super().__init__()
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. '
+                             f'Supported ones are: {_reduction_modes}')
+
+        self.loss_weight = loss_weight
+        self.reduction = reduction
+        self.sample_wise = sample_wise
+        self.reciprocal = reciprocal
+
+    def forward(self, pred, target, weight=None, **kwargs):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+            weight (Tensor, optional): of shape (N, C, H, W). Element-wise
+                weights. Default: None.
+        """
+        loss = psnr_loss(
+            pred,
+            target,
+            weight,
+            reduction=self.reduction,
+            sample_wise=self.sample_wise,
+            **kwargs)
+
+        if self.reciprocal:
+            loss = -1./loss
+
+        return loss*self.loss_weight
