@@ -56,10 +56,10 @@ test_pipeline = [
 ]
 data_root = '../data/Rain200L'
 data = dict(
-    samples_per_gpu=18,
     workers_per_gpu=8,
-    drop_last=True,
-    val_samples_per_gpu=1,
+    train_dataloader=dict(samples_per_gpu=18, drop_last=True),
+    val_dataloader=dict(samples_per_gpu=1),
+    test_dataloader=dict(samples_per_gpu=1),
     train=dict(
         type='ExhaustivePatchDataset',
         patch_size=100,
