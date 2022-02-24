@@ -8,6 +8,7 @@ This is a single image deraining toolbox based on [PyTorch](https://github.com/p
 - [DDN](configs/ddn/README.md) (CVPR' 2017) \[[paper](https://openaccess.thecvf.com/content_cvpr_2017/html/Fu_Removing_Rain_From_CVPR_2017_paper.html)\] \[[code](https://xueyangfu.github.io/projects/cvpr2017.html)\]
 - [RESCAN](configs/rescan/README.md) (ECCV' 2018) [[paper](https://openaccess.thecvf.com/content_ECCV_2018/html/Xia_Li_Recurrent_Squeeze-and-Excitation_Context_ECCV_2018_paper.html)] \[[code](https://github.com/XiaLiPKU/RESCAN)\]
 - [PReNet](configs/prenet/README.md) (CVPR' 2019) \[[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Ren_Progressive_Image_Deraining_Networks_A_Better_and_Simpler_Baseline_CVPR_2019_paper.html)\] \[[code](https://github.com/csdwren/PReNet)\]
+- [ReHEN](configs/rehen/README.md) (ACMMM' 2019) \[[paper](https://dl.acm.org/doi/10.1145/3343031.3351149)\] \[[code](https://github.com/nnUyi/ReHEN)\]
 - [LPNet](configs/lpnet/README.md) (TNNLS' 2019) \[[paper](https://ieeexplore.ieee.org/document/8767931)\] \[[code](https://xueyangfu.github.io/projects/LPNet.html)\]
 - [Physical Model Guided ID](configs/physical_model_guided/README.md) (ICME' 2020) \[[paper](https://www.computer.org/csdl/proceedings-article/icme/2020/09102878/1kwr8NheVtm)\] \[[code](https://github.com/Ohraincu/PHYSICAL-MODEL-GUIDED-DEEP-IMAGE-DERAINING)\]
 - [OUCDNet](configs/oucdnet/README.md) (JSTSP' 2020) \[[paper](https://ieeexplore.ieee.org/abstract/document/9264746)\] \[[code](https://github.com/jeya-maria-jose/Derain_OUCD_Net)\]

@@ -9,11 +9,12 @@ from .oucdnet import OUCDNet
 from .physical_model_guided import PhysicalModelGuided
 from .prenet import PRN, PReNet
 from .rcdnet import RCDNet
+from .rehen import ReHEN
 from .rescan import RESCAN
 
 __all__ = [
     'DDN', 'RESCAN', 'DCSFN', 'DerainNet',
     'DRDNet', 'DualGCN', 'PRN', 'PReNet',
     'RCDNet', 'PhysicalModelGuided', 'OUCDNet', 'IDGenerator',
-    'IDDiscriminator', 'LPNet'
+    'IDDiscriminator', 'LPNet', 'ReHEN'
 ]
