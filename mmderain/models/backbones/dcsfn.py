@@ -5,14 +5,10 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from mmderain.models.common import make_layer
+from mmderain.models.common import make_layer, sizeof
 from mmderain.models.layers import RESCAN_GRU, RESCAN_LSTM, RESCAN_RNN
 from mmderain.models.registry import BACKBONES
 from mmderain.utils.functools import zip_with_next
-
-
-def sizeof(x: torch.Tensor) -> Tuple[int]:
-    return tuple(x.shape)[2:]
 
 
 def conv3x3(in_chn: int, out_chn: int, bias: bool = True) -> nn.Module:

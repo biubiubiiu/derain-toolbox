@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+from mmderain.models.common import sizeof
 from mmderain.models.registry import BACKBONES
 from mmderain.utils.functools import zip_with_next
 
@@ -166,7 +167,7 @@ class OUCDNet(nn.Module):
         msff_feat0 = None
         msff_feat1 = None
         if self.use_msff:
-            in_size = tuple(x.shape)[2:]
+            in_size = sizeof(x)
             msff_size = tuple(s // 2 for s in in_size)
             msff_feat0 = self.msff0(feat_overcomplete[:3], msff_size)
             msff_feat1 = self.msff1(feat_overcomplete[3:], msff_size)

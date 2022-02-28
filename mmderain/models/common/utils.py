@@ -1,3 +1,6 @@
+from typing import Tuple
+
+import torch
 from torch import nn
 
 
@@ -15,3 +18,7 @@ def make_layer(block, num_blocks, **kwarg):
     for _ in range(num_blocks):
         layers.append(block(**kwarg))
     return nn.Sequential(*layers)
+
+
+def sizeof(x: torch.Tensor) -> Tuple[int]:
+    return tuple(x.shape)[2:]

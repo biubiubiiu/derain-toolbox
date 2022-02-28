@@ -5,12 +5,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from mmderain.models.common import make_layer
+from mmderain.models.common import make_layer, sizeof
 from mmderain.models.registry import BACKBONES
-
-
-def sizeof(x: torch.Tensor) -> Tuple[int]:
-    return tuple(x.shape)[2:]
 
 
 class MSRB(nn.Module):
