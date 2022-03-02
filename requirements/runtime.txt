@@ -5,3 +5,4 @@ yapf
 einops
 PyWavelets>=1.0.0
 https://github.com/fbcotter/pytorch_wavelets/archive/8d2e3b4289beaea9aa89f7b1dbb290e448331197.tar.gz
+torchinfo
