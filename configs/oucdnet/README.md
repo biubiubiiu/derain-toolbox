@@ -34,7 +34,7 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 
 |                           Method                           |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
 | :--------------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
-| [oucdnet_o3n5_msff](/configs/oucdnet/oucdnet_o3n5_msff.py) | 34.01/0.962 | 23.71/0.803 | -----/----- | -----/----- | -----/----- |
+| [oucdnet_o3n5_msff](/configs/oucdnet/oucdnet_o3n5_msff.py) | 34.15/0.962 | 25.69/0.820 | -----/----- | -----/----- | -----/----- |
 
 <br/>
 

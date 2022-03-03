@@ -59,7 +59,7 @@ test_pipeline = [
         key='gt,lq',
         flag='color'
     ),
-    dict(type='Pad', keys=['lq'], ds_factor=32),
+    dict(type='Pad', keys=['lq'], ds_factor=32, mode='reflect'),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='Normalize', keys=['lq'], mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
