@@ -89,8 +89,14 @@ class SubNet(nn.Module):
 class DRDNet(nn.Module):
     """DRD-Net Network Strcuture
 
-    Paper: Detail-recovery Image Deraining via Context Aggregation Networks
+    Paper: Detail-recovery Image Deraining via Context Aggregation Networks.
     Official Code: https://github.com/Dengsgithub/DRD-Net
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 64.
+        num_blocks (int): Depth of each subnet. Default: 16.
     """
 
     def __init__(

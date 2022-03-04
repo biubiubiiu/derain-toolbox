@@ -296,6 +296,17 @@ class DCSFN(nn.Module):
 
     Paper: DCSFN: Deep Cross-scale Fusion Network for Single Image Rain Removal
     Official Code: https://github.com/Ohraincu/DCSFN
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 20.
+        recurrent_unit (str): Type of recurrent units in network:
+            "GRU" | "LSTM" | "RNN". Default: "LSTM".
+        num_encoder_decoder_layers (int): Number of layers in encoder and decoder. Default: 16.
+        num_inner_scales (int): Number of scales in `InnerScaleFusionBlock`. Default: 4.
+        num_inner_convs (int): Number of dilated convolutions in `InnerScaleFusionBlock`.
+            Default: 4.
     """
 
     valid_recurrent_units = {'GRU', 'LSTM', 'RNN'}

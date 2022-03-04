@@ -72,6 +72,7 @@ class EncoderBlock(nn.Module):
 
 
 class DecoderBlock(nn.Module):
+
     def __init__(self, inplanes: int, planes: int, upsample: bool) -> None:
         super().__init__()
 
@@ -99,8 +100,24 @@ class DecoderBlock(nn.Module):
 class OUCDNet(nn.Module):
     """OUCDNet Network Structure
 
-    Paper: Exploring Overcomplete Representations for Single Image Deraining Using CNNs
+    Paper: Exploring Overcomplete Representations for Single Image Deraining Using CNNs.
     Official Code: https://github.com/jeya-maria-jose/Derain_OUCD_Net
+
+    Args:
+        out_channels (int): Channel number of outputs.
+        enc_undercomplete_channels (list[int]): Channel numbers of intermediate features
+            in the encoder part of undercomplete branch.
+            Default: [3, 32, 64, 128, 512, 1024].
+        dec_undercomplete_channels (list[int]): Channel numbers of intermediate features
+            in the decoder part of undercomplete branch.
+            Default: [1024, 512, 128, 64, 32, 16].
+        enc_overcomplete_channels (list[int]): Channel numbers of intermediate features
+            in the encoder part of overcomplete branch.
+            Default: [3, 32, 64, 128].
+        dec_overcomplete_channels (list[int]): Channel numbers of intermediate features
+            in the decoder part of overcomplete branch.
+            Default: [128, 64, 32, 16].
+        use_msff (bool): Whether use msff block or not. Default: ``True``.
     """
 
     def __init__(

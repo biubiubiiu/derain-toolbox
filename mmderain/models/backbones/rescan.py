@@ -11,9 +11,9 @@ from mmderain.models.registry import BACKBONES
 class RecurrentUnit(nn.Module):
 
     recurrent_units = {
-        "GRU": RESCAN_GRU,
-        "LSTM": RESCAN_LSTM,
-        "RNN": RESCAN_RNN
+        'GRU': RESCAN_GRU,
+        'LSTM': RESCAN_LSTM,
+        'RNN': RESCAN_RNN
     }
 
     def __init__(
@@ -36,7 +36,7 @@ class RecurrentUnit(nn.Module):
         x: torch.Tensor,
         hx: Optional[Union[torch.Tensor, Tuple[torch.Tensor]]]
     ) -> Tuple[torch.Tensor, ...]:
-        if self.model_type == "LSTM":
+        if self.model_type == 'LSTM':
             h, c = self.model(x, hx)
             h = self.act(self.se(h))
             return h, (h, c)
@@ -46,16 +46,27 @@ class RecurrentUnit(nn.Module):
             return h, h
 
 
-@ BACKBONES.register_module()
+@BACKBONES.register_module()
 class RESCAN(nn.Module):
     """RESCAN Network Structure
 
     Paper: Recurrent Squeeze-and-Excitation Context Aggregation Net for Single Image Deraining.
     Official Code: https://github.com/XiaLiPKU/RESCAN
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 24.
+        num_stages (int): Number of recursions. Default: 4.
+        depth (int): Depth of the network. Default: 5.
+        recurrent_unit (str): Type of recurrent units in network:
+            "GRU" | "LSTM" | "RNN". Default: "GRU".
+        prediction_type (str): Prediction type of rain residuals:
+            "Additive" | "Full". Default: "Full".
     """
 
-    valid_recurrent_units = {"GRU", "LSTM", "RNN"}
-    valid_prediction_types = {"Additive", "Full"}
+    valid_recurrent_units = {'GRU', 'LSTM', 'RNN'}
+    valid_prediction_types = {'Additive', 'Full'}
 
     def __init__(
         self,
@@ -64,19 +75,19 @@ class RESCAN(nn.Module):
         mid_channels: int = 24,
         num_stages: int = 4,
         depth: int = 5,
-        recurrent_unit: str = "GRU",
-        prediction_type="Full",
+        recurrent_unit: str = 'GRU',
+        prediction_type: str = 'Full',
     ) -> None:
 
         super().__init__()
 
         if recurrent_unit not in self.valid_recurrent_units:
-            raise KeyError(f"invalid recurrent unit type {recurrent_unit} for RESCAN")
+            raise ValueError(f'invalid recurrent unit type {recurrent_unit} for RESCAN')
 
         if prediction_type not in self.valid_prediction_types:
             raise ValueError(
-                f"prediction_type must be one of {self.valid_prediction_types},\
-                but got prediction_type={prediction_type}"
+                f'prediction_type must be one of {self.valid_prediction_types}, ',
+                f'but got prediction_type={prediction_type}'
             )
 
         self.num_stages = num_stages
@@ -118,7 +129,7 @@ class RESCAN(nn.Module):
             memories = states.copy()
 
             x = self.output_layer(x)  # estimation of rain layer
-            if self.prediction_type == "Additive" and s > 0:
+            if self.prediction_type == 'Additive' and s > 0:
                 # accumulate previous rain estimates
                 x = x + torch.clone(prev_rain_estimate)
 

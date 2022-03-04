@@ -29,6 +29,16 @@ class BasicGeneratorBlock(nn.Module):
 
 @BACKBONES.register_module()
 class IDGenerator(nn.Module):
+    """Generator of ID-CGAN
+
+    Paper: Image De-Raining Using a Conditional Generative Adversarial Network.
+    Official Code: https://github.com/hezhangsprinter/ID-CGAN
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 64.
+    """
 
     def __init__(
         self,
@@ -92,6 +102,17 @@ class BasicDiscriminatorBlock(nn.Module):
 
 @COMPONENTS.register_module()
 class IDDiscriminator(nn.Module):
+    """Discriminator of ID-CGAN
+
+    Paper: Image De-Raining Using a Conditional Generative Adversarial Network.
+    Official Code: https://github.com/hezhangsprinter/ID-CGAN
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 48.
+        n_layer (int): Depth of network. Default: 3.
+    """
 
     def __init__(
         self,

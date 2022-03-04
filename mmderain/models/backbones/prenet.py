@@ -46,9 +46,20 @@ class ResBlockBody(nn.Module):
 
 @BACKBONES.register_module()
 class PRN(nn.Module):
-    """PRN Network Structure
+    """PRN Network Structure.
 
-    This is the simplified version of PReNet, where recurrent unit is removed
+    This is the simplified version of PReNet, where recurrent unit is removed.
+
+    Paper: Progressive Image Deraining Networks: A Better and Simpler Baseline.
+    Official code: https://github.com/csdwren/PReNet
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 32.
+        num_stages (int): Number of recursions. Default: 6.
+        num_resblocks (int): Number of residual blocks. Default: 5.
+        recursive_resblock (bool): Whether use recursive reisudal block or not. Default: ``False``.
     """
 
     def __init__(
@@ -113,8 +124,16 @@ class RecurrentUnit(nn.Module):
 class PReNet(nn.Module):
     """PReNet Network Strcutre
 
-    Paper: Progressive Image Deraining Networks: A Better and Simpler Baseline
+    Paper: Progressive Image Deraining Networks: A Better and Simpler Baseline.
     Official code: https://github.com/csdwren/PReNet
+
+    Args:
+        in_channels (int): Channel number of inputs.
+        out_channels (int): Channel number of outputs.
+        mid_channels (int): Channel number of intermediate features. Default: 32.
+        num_stages (int): Number of recursions. Default: 6.
+        num_resblocks (int): Number of residual blocks. Default: 5.
+        recursive_resblock (bool): Whether use recursive reisudal block or not. Default: ``False``.
     """
 
     valid_recurrent_units = {'GRU', 'LSTM'}
@@ -132,7 +151,7 @@ class PReNet(nn.Module):
         super().__init__()
 
         if recurrent_unit not in self.valid_recurrent_units:
-            raise KeyError(f'invalid recurrent unit type {recurrent_unit} for PReNet')
+            raise ValueError(f'invalid recurrent unit type {recurrent_unit} for PReNet')
 
         self.num_stages = num_stages
 
