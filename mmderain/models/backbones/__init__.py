@@ -11,10 +11,12 @@ from .prenet import PRN, PReNet
 from .rcdnet import RCDNet
 from .rehen import ReHEN
 from .rescan import RESCAN
+from .ecnet import RainEncoder, ECNet
 
 __all__ = [
     'DDN', 'RESCAN', 'DCSFN', 'DerainNet',
     'DRDNet', 'DualGCN', 'PRN', 'PReNet',
     'RCDNet', 'PhysicalModelGuided', 'OUCDNet', 'IDGenerator',
-    'IDDiscriminator', 'LPNet', 'ReHEN'
+    'IDDiscriminator', 'LPNet', 'ReHEN', 'RainEncoder',
+    'ECNet'
 ]
