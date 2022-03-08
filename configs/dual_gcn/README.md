@@ -1,7 +1,7 @@
 # DualGCN (AAAI'2021)
 
 <details>
-<summary align="right"><a href="https://ojs.aaai.org/index.php/AAAI/article/view/16224">Rain Streak Removal via Dual Graph Convolutional Network</a></summary>
+<summary align="right"><a href="https://ojs.aaai.org/index.php/AAAI/article/view/16224">Rain Streak Removal via Dual Graph Convolutional Network (AAAI'2021)</a></summary>
 
 ```bibtex
 @inproceedings{fu2021rain,

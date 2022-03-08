@@ -1,7 +1,7 @@
 # DCSFN (ACMMM'2020)
 
 <details>
-<summary align="right"><a href="https://dl.acm.org/doi/abs/10.1145/3394171.3413820">DCSFN: Deep Cross-scale Fusion Network for Single Image Rain Removal</a></summary>
+<summary align="right"><a href="https://dl.acm.org/doi/abs/10.1145/3394171.3413820">DCSFN: Deep Cross-scale Fusion Network for Single Image Rain Removal (ACMMM'2020)</a></summary>
 
 ```bibtex
 @inproceedings{wang2020dcsfn,
