@@ -225,6 +225,121 @@ class Flip:
 
 
 @PIPELINES.register_module()
+class Rotate:
+    """Apply Rotate Transformation to image.
+
+    Args:
+        keys (list[str]): The images to be rotated.
+        angle (int | float): Rotation angle in degrees, positive values mean
+            clockwise rotation.
+        rotate_ratio (float): The propability to rotate the images.
+        scale (int | float): Isotropic scale factor. Same in
+            ``mmcv.imrotate``.
+        center (int | float | tuple[float]): Center point (w, h) of the
+            rotation in the source image. If None, the center of the
+            image will be used. Same in ``mmcv.imrotate``.
+        img_fill_val (int | float | tuple): The fill value for image border.
+            If float, the same value will be used for all the three
+            channels of image. If tuple, the should be 3 elements (e.g.
+            equals the number of channels for image).
+    """
+
+    def __init__(self,
+                 keys,
+                 angle,
+                 rotate_ratio,
+                 scale=1,
+                 center=None,
+                 img_fill_val=128):
+        assert isinstance(angle, (int, float)), \
+            f'The angle must be type int or float. got {type(angle)}.'
+        assert isinstance(scale, (int, float)), \
+            f'The scale must be type int or float. got type {type(scale)}.'
+        if isinstance(center, (int, float)):
+            center = (center, center)
+        elif isinstance(center, tuple):
+            assert len(center) == 2, 'center with type tuple must have '\
+                f'2 elements. got {len(center)} elements.'
+        else:
+            assert center is None, 'center must be None or type int, '\
+                f'float or tuple, got type {type(center)}.'
+        if isinstance(img_fill_val, (float, int)):
+            img_fill_val = tuple([float(img_fill_val)] * 3)
+        elif isinstance(img_fill_val, tuple):
+            assert len(img_fill_val) == 3, 'img_fill_val as tuple must '\
+                f'have 3 elements. got {len(img_fill_val)}.'
+            img_fill_val = tuple([float(val) for val in img_fill_val])
+        else:
+            raise ValueError(
+                'img_fill_val must be float or tuple with 3 elements.')
+        assert np.all([0 <= val <= 255 for val in img_fill_val]), \
+            'all elements of img_fill_val should between range [0,255]. '\
+            f'got {img_fill_val}.'
+
+        self.keys = keys
+        self.angle = angle
+        self.rotate_ratio = rotate_ratio
+        self.scale = scale
+        self.center = center
+        self.img_fill_val = img_fill_val
+
+    def _rotate_img(self, img, angle):
+        """Rotate the image.
+
+        Args:
+            results (dict): Result dict from loading pipeline.
+            angle (float): Rotation angle in degrees, positive values
+                mean clockwise rotation. Same in ``mmcv.imrotate``.
+            center (tuple[float], optional): Center point (w, h) of the
+                rotation. Same in ``mmcv.imrotate``.
+            scale (int | float): Isotropic scale factor. Same in
+                ``mmcv.imrotate``.
+        """
+        h, w = img.shape[:2]
+        center = self.center
+        if center is None:
+            center = ((w - 1) * 0.5, (h - 1) * 0.5)
+
+        img_rotated = mmcv.imrotate(
+            img, angle, center, self.scale, border_value=self.img_fill_val)
+        return img_rotated
+
+    def __call__(self, results):
+        """Call function to rotate images, bounding boxes, masks and semantic
+        segmentation maps.
+
+        Args:
+            results (dict): Result dict from loading pipeline.
+
+        Returns:
+            dict: Rotated results.
+        """
+        rotate = np.random.random() < self.rotate_ratio
+
+        if rotate:
+            angle = self.angle
+            for key in self.keys:
+                img = results[key].copy()
+                results[key] = self._rotate_img(img, angle)
+        else:
+            angle = 0
+
+        results['rotate'] = rotate
+        results['rotate_angle'] = angle
+        return results
+
+    def __repr__(self):
+        repr_str = self.__class__.__name__
+        repr_str += f'keys={self.keys}, '
+        repr_str += f'angle={self.angle}, '
+        repr_str += f'rotate_ratio={self.rotate_ratio}, '
+        repr_str += f'scale={self.scale}, '
+        repr_str += f'center={self.center}, '
+        repr_str += f'img_fill_val={self.img_fill_val}, '
+        return repr_str
+
+
+@PIPELINES.register_module()
 class Pad:
     """Pad the images to align with network downsample factor for testing.
 
