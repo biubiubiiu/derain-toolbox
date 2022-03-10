@@ -353,14 +353,39 @@ class Pad:
     Args:
         keys (list[str]): The images to be padded.
         ds_factor (int): Downsample factor of the network. The height and
-            weight will be padded to a multiple of ds_factor. Default: 32.
+            weight will be padded to a multiple of ds_factor. Default: 1.
+        min_size (int | float | tuple[float], optional): Minumum size of the 
+            output image. Default: None.
         kwargs (option): any keyword arguments to be passed to `numpy.pad`.
     """
 
-    def __init__(self, keys, ds_factor=32, **kwargs):
+    def __init__(self, keys, ds_factor=1, min_size=None, **kwargs):
+        if isinstance(min_size, (int, float)):
+            min_size = (min_size, min_size)
+        elif isinstance(min_size, tuple):
+            assert len(min_size) == 2, 'center with type tuple must have '\
+                f'2 elements. got {len(min_size)} elements.'
+        else:
+            assert min_size is None, 'min_size must be None or type int, '\
+                f'float or tuple, got type {type(min_size)}.'
+
         self.keys = keys
         self.ds_factor = ds_factor
+        self.min_size = min_size
         self.kwargs = kwargs
+
+    def _get_padded_shape(self, h, w):
+        new_h = self.ds_factor * ((h - 1) // self.ds_factor + 1)
+        new_w = self.ds_factor * ((w - 1) // self.ds_factor + 1)
+
+        if self.min_size is not None:
+            min_h, min_w = self.min_size
+            if new_h < min_h:
+                new_h = self.ds_factor * ((min_h - 1) // self.ds_factor + 1)
+            if new_w < min_w:
+                new_w = self.ds_factor * ((min_w - 1) // self.ds_factor + 1)
+
+        return new_h, new_w
 
     def __call__(self, results):
         """Call function.
@@ -374,8 +399,7 @@ class Pad:
         """
         h, w = results[self.keys[0]].shape[:2]
 
-        new_h = self.ds_factor * ((h - 1) // self.ds_factor + 1)
-        new_w = self.ds_factor * ((w - 1) // self.ds_factor + 1)
+        new_h, new_w = self._get_padded_shape(h, w)
 
         pad_h = new_h - h
         pad_w = new_w - w
