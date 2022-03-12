@@ -5,8 +5,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from ..common import conv_gauss, pyr_downsample
 from ..registry import LOSSES
-from .pixelwise_loss import l1_loss
+from .pixelwise_loss import charbonnier_loss, l1_loss
 
 _reduction_modes = ['none', 'mean', 'sum']
 
@@ -53,3 +54,50 @@ class GradientLoss(nn.Module):
             l1_loss(
                 pred_grad_y, target_grad_y, weight, reduction=self.reduction))
         return loss * self.loss_weight
+
+
+@LOSSES.register_module()
+class EdgeLoss(nn.Module):
+    """Edge loss.
+
+    Paper: Multi-Stage Progressive Image Restoration.
+
+    Args:
+        loss_weight (float): Loss weight for L1 loss. Default: 1.0.
+        eps (float): A value used to control the curvature near zero.
+            Default: 1e-12.
+        reduction (str): Specifies the reduction to apply to the output.
+            Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
+    """
+
+    def __init__(self, loss_weight=1.0, eps=1e-12, reduction='mean'):
+        super().__init__()
+
+        if reduction not in ['none', 'mean', 'sum']:
+            raise ValueError(f'Unsupported reduction mode: {reduction}. '
+                             f'Supported ones are: {_reduction_modes}')
+
+        self.loss_weight = loss_weight
+        self.eps = eps
+        self.reduction = reduction
+
+        k = torch.Tensor([[.05, .25, .4, .25, .05]])
+        self.kernel = torch.matmul(k.T, k).unsqueeze(0).repeat(3, 1, 1, 1)
+
+    def laplacian(self, x):
+        gauss_kernel = self.kernel.to(x)
+        filtered = conv_gauss(x, gauss_kernel)
+        down = pyr_downsample(filtered)
+        new_filter = torch.zeros_like(filtered)
+        new_filter[:, :, ::2, ::2] = down*4
+        filtered = conv_gauss(new_filter, gauss_kernel)
+        diff = x - filtered
+        return diff
+
+    def forward(self, pred, target, weight=None):
+        return self.loss_weight * charbonnier_loss(
+            self.laplacian(pred),
+            self.laplacian(target),
+            weight=weight,
+            eps=self.eps
+        )
