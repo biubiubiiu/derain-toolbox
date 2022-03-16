@@ -4,13 +4,13 @@
 import copy
 import platform
 import random
+import warnings
 from functools import partial
 
 import numpy as np
-import torch
 from mmcv.parallel import collate
 from mmcv.runner import get_dist_info
-from mmcv.utils import build_from_cfg
+from mmcv.utils import TORCH_VERSION, build_from_cfg, digit_version
 from torch.utils.data import ConcatDataset, DataLoader
 
 from .dataset_wrappers import ExhaustivePatchDataset
@@ -143,8 +143,11 @@ def build_dataloader(dataset,
         worker_init_fn, num_workers=num_workers, rank=rank,
         seed=seed) if seed is not None else None
 
-    if torch.__version__ >= '1.7.0':
+    if TORCH_VERSION !='parrots' and digit_version(TORCH_VERSION) >= digit_version('1.7.0'):
         kwargs['persistent_workers'] = persistent_workers
+    elif persistent_workers is True:
+        warnings.warn('persistent_workers is invalid because your pytorch '
+                      'version is lower than 1.7.0')
 
     data_loader = DataLoader(
         dataset,
