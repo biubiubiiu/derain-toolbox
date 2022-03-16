@@ -17,6 +17,7 @@ This is a single image deraining toolbox based on [PyTorch](https://github.com/p
 - [DRD-Net](configs/drdnet/README.md) (CVPR' 2020) \[[paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Deng_Detail-recovery_Image_Deraining_via_Context_Aggregation_Networks_CVPR_2020_paper.html)\] \[[code](https://github.com/Dengsgithub/DRD-Net)\]
 - [RCDNet](configs/rcdnet/README.md) (CVPR' 2020) \[[paper](https://openaccess.thecvf.com/content_CVPR_2020/html/Wang_A_Model-Driven_Deep_Neural_Network_for_Single_Image_Rain_Removal_CVPR_2020_paper.html)\] \[[code](https://github.com/hongwang01/RCDNet_simple)\]
 - [DualGCN](configs/dual_gcn/README.md) (AAAI' 2021) \[[paper](https://ojs.aaai.org/index.php/AAAI/article/view/16224)\] \[[code](https://xueyangfu.github.io/paper/2021/AAAI/code.zip)\]
+- [ECNet](configs/ecnet/README.md) (WACV' 2022) \[[paper](https://openaccess.thecvf.com/content/WACV2022/html/Li_Single_Image_Deraining_Network_With_Rain_Embedding_Consistency_and_Layered_WACV_2022_paper.html)\] \[[code](https://github.com/Yizhou-Li-CV/ECNet)\]
 
 ## Installation
 

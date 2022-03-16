@@ -1,11 +1,13 @@
-from .evaluation import (DistEvalHook, EvalHook, L1Evaluation, mse,
-                         psnr, reorder_image, sad, ssim)
-from .misc import tensor2img, crop_border
+from .evaluation import (DistEvalHook, EvalHook, L1Evaluation, mse, psnr,
+                         reorder_image, sad, ssim)
+from .initializers import ECNetInitializer
+from .misc import crop_border, tensor2img
 from .optimizer import build_optimizers
 from .scheduler import LinearLrUpdaterHook
 
 __all__ = [
-    'build_optimizers', 'tensor2img', 'LinearLrUpdaterHook', 'DistEvalHook',
-    'EvalHook', 'L1Evaluation', 'mse', 'psnr',
-    'reorder_image', 'sad', 'ssim', 'crop_border'
+    'DistEvalHook', 'EvalHook', 'L1Evaluation', 'mse',
+    'psnr', 'reorder_image', 'sad', 'ssim',
+    'ECNetInitializer', 'crop_border', 'tensor2img', 'build_optimizers',
+    'LinearLrUpdaterHook'
 ]
