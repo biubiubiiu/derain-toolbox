@@ -56,10 +56,10 @@ class ExhaustivePatchDataset:
             if is_paired:
                 w = w // 2
 
-            start_xs = list(range(0, w-self.patch_size[0]+1, self.stride[0]))
-            start_ys = list(range(0, h-self.patch_size[1]+1, self.stride[1]))
-            top_left_anchors = list(itertools.product(start_xs, start_ys))
-            anchors_with_img_idx = list(itertools.product((idx,), top_left_anchors))
+            start_xs = range(0, w-self.patch_size[0]+1, self.stride[0])
+            start_ys = range(0, h-self.patch_size[1]+1, self.stride[1])
+            top_left_anchors = itertools.product(start_xs, start_ys)
+            anchors_with_img_idx = itertools.product((idx,), top_left_anchors)
             patch_infos.extend(anchors_with_img_idx)
 
         return patch_infos
