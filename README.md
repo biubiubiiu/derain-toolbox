@@ -11,6 +11,7 @@ This is a single image deraining toolbox based on [PyTorch](https://github.com/p
 - [ReHEN](configs/rehen/README.md) (ACMMM' 2019) \[[paper](https://dl.acm.org/doi/10.1145/3343031.3351149)\] \[[code](https://github.com/nnUyi/ReHEN)\]
 - [LPNet](configs/lpnet/README.md) (TNNLS' 2019) \[[paper](https://ieeexplore.ieee.org/document/8767931)\] \[[code](https://xueyangfu.github.io/projects/LPNet.html)\]
 - [Physical Model Guided ID](configs/physical_model_guided/README.md) (ICME' 2020) \[[paper](https://www.computer.org/csdl/proceedings-article/icme/2020/09102878/1kwr8NheVtm)\] \[[code](https://github.com/Ohraincu/PHYSICAL-MODEL-GUIDED-DEEP-IMAGE-DERAINING)\]
+- [MARDNet](configs/mardnet/README.md) (ACCV' 2020) \[[paper](https://openaccess.thecvf.com/content/ACCV2020/html/Chen_Multi-scale_Attentive_Residual_Dense_Network_for_Single_Image_Rain_Removal_ACCV_2020_paper.html)\] \[[code](https://github.com/cxtalk/MARD-Net)\]
 - [OUCDNet](configs/oucdnet/README.md) (JSTSP' 2020) \[[paper](https://ieeexplore.ieee.org/abstract/document/9264746)\] \[[code](https://github.com/jeya-maria-jose/Derain_OUCD_Net)\]
 - [ID-CGAN](configs/cgan/README.md) (TCSVT' 2020) \[[paper](https://ieeexplore.ieee.org/document/8727938)\] \[[code](https://github.com/hezhangsprinter/ID-CGAN)\]
 - [DCSFN](configs/dcsfn/README.md) (ACMMM' 2020) \[[paper](https://dl.acm.org/doi/abs/10.1145/3394171.3413820)\] \[[code](https://github.com/Ohraincu/DCSFN)]
