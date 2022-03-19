@@ -6,8 +6,10 @@ from .multi_output_restorer import MultiOutputRestorer
 from .multi_stage_restorer import MultiStageRestorer
 from .physical_model_guided import PhysicalModelGuided
 from .rcdnet import RCDNet
+from .rlnet import RLNet
 
 __all__ = [
-    'BasicRestorer', 'MultiOutputRestorer', 'MultiStageRestorer', 'RCDNet',
-    'PhysicalModelGuided', 'IDCGAN', 'LPNet', 'ECNet'
+    'BasicRestorer', 'IDCGAN', 'ECNet', 'LPNet',
+    'MultiOutputRestorer', 'MultiStageRestorer', 'PhysicalModelGuided', 'RCDNet',
+    'RLNet'
 ]
