@@ -22,5 +22,5 @@ def get_root_logger(log_file=None, log_level=logging.INFO):
         logging.Logger: The root logger.
     """
     # root logger name: mmderain
-    logger = get_logger(__name__.split('.')[0], log_file, log_level)
+    logger = get_logger(__name__.split('.', maxsplit=1)[0], log_file, log_level)
     return logger

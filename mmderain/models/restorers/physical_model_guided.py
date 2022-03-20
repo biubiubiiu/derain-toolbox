@@ -3,7 +3,7 @@ import os.path as osp
 
 import mmcv
 
-from mmderain.core import crop_border, psnr, ssim, tensor2img
+from mmderain.core import psnr, ssim, tensor2img
 
 from ..base import BaseModel
 from ..builder import build_backbone, build_loss

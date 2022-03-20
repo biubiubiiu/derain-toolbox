@@ -4,7 +4,7 @@ import os.path as osp
 import mmcv
 from torch import nn
 
-from mmderain.core import crop_border, psnr, ssim, tensor2img
+from mmderain.core import psnr, ssim, tensor2img
 from mmderain.models.common import gaussian_pyramid
 
 from ..base import BaseModel

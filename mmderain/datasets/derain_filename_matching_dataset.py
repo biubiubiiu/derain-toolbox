@@ -1,7 +1,7 @@
 import itertools
 import os.path as osp
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from .base_derain_dataset import BaseDerainDataset
 from .registry import DATASETS
@@ -83,11 +83,6 @@ class DerainFilenameMatchingDataset(BaseDerainDataset):
         test_mode: bool = False,
     ) -> None:
         super().__init__(pipeline, test_mode)
-        phase = 'test' if test_mode else 'train'
-        self.dataroot_lq = osp.join(str(dataroot), phase, lq_folder)
-        self.dataroot_gt = osp.join(str(dataroot), phase, gt_folder)
-        self.data_infos_lq = self.load_annotations(self.dataroot_lq)
-        self.data_infos_gt = self.load_annotations(self.dataroot_gt)
 
         valid_mapping_rule = {'full', 'prefix'}
         if mapping_rule not in valid_mapping_rule:
@@ -96,6 +91,12 @@ class DerainFilenameMatchingDataset(BaseDerainDataset):
 
         if mapping_rule == 'prefix' and separator is None:
             raise ValueError('separator should be specified when using prefix matching')
+
+        phase = 'test' if test_mode else 'train'
+        self.dataroot_lq = osp.join(str(dataroot), phase, lq_folder)
+        self.dataroot_gt = osp.join(str(dataroot), phase, gt_folder)
+        self.data_infos_lq = self.load_annotations(self.dataroot_lq)
+        self.data_infos_gt = self.load_annotations(self.dataroot_gt)
 
         self.mapping_table = self.generate_mapping_table(
             mapping_rule,
@@ -143,16 +144,16 @@ class DerainFilenameMatchingDataset(BaseDerainDataset):
         results = dict(lq_path=img_lq_path, gt_path=img_gt_path)
         return results
 
-    def generate_mapping_table(self, rule, separator) -> Dict:
+    def generate_mapping_table(self, rule: str, separator: Optional[str]) -> Dict[str, str]:
         combinations = itertools.product(
             [elem['path'] for elem in self.data_infos_lq],
             [elem['path'] for elem in self.data_infos_gt]
         )
 
-        def get_basename(path):
+        def get_basename(path: str):
             return osp.splitext(osp.split(path)[-1])[0]
 
-        def prefix_match(x):
+        def prefix_match(x: Tuple[str]):
             lq_path, gt_path = x
             basename_lq = get_basename(lq_path)
             basename_gt = get_basename(gt_path)
@@ -160,14 +161,13 @@ class DerainFilenameMatchingDataset(BaseDerainDataset):
             prefix = basename_lq.split(separator)[0]
             return basename_gt == prefix
 
-        def full_match(x):
+        def full_match(x: Tuple[str]):
             lq_path, gt_path = x
             basename_lq = get_basename(lq_path)
             basename_gt = get_basename(gt_path)
 
             return basename_lq == basename_gt
 
-        matching = None
         if rule == 'prefix':
             matching = prefix_match
         elif rule == 'full':

@@ -7,8 +7,8 @@ from .structural_loss import SSIMLoss
 from .utils import mask_reduce_loss, reduce_loss
 
 __all__ = [
-    'CharbonnierLoss', 'L1Loss', 'MaskedTVLoss', 'MSELoss',
-    'GradientLoss', 'reduce_loss', 'mask_reduce_loss', 'DiscShiftLoss',
-    'GANLoss', 'GradientPenaltyLoss', 'PerceptualLoss', 'PerceptualVGG',
-    'TransferalPerceptualLoss', 'SSIMLoss'
+    'DiscShiftLoss', 'GANLoss', 'GradientPenaltyLoss', 'GradientLoss',
+    'PerceptualLoss', 'PerceptualVGG', 'TransferalPerceptualLoss', 'CharbonnierLoss',
+    'L1Loss', 'MaskedTVLoss', 'MSELoss', 'SSIMLoss',
+    'mask_reduce_loss', 'reduce_loss'
 ]
