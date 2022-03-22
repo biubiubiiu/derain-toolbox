@@ -1,12 +1,37 @@
 from typing import List, Tuple
 
+import numpy as np
 import torch
 import torch.nn.functional as F
-from scipy import io
 from torch import nn
 
 from mmderain.models.common import make_layer
 from mmderain.models.registry import BACKBONES
+
+
+def init_rain_kernel(size, norm, inner, std):
+    ax = np.arange(size, dtype=np.float32)
+    ax = ax - np.mean(ax)
+    xv, yv = np.meshgrid(ax, ax, indexing='xy')
+    inner = np.round(inner * (size-1)/2)
+    xv = np.sign(xv) * np.clip(np.abs(xv)-inner, a_min=0, a_max=None)
+    yv = np.sign(yv) * np.clip(np.abs(yv)-inner, a_min=0, a_max=None)
+    yv = yv / norm
+    h = np.exp(-(xv**2 + yv**2)/(2 * std**2))
+    h /= np.sum(h)
+    return h
+
+
+def init_rain_kernel_dict(size=9, n=32, n1=12):
+    rain_dict = np.zeros((n, size, size), dtype=np.float32)
+    for i in range(n):
+        if i < n1:
+            rain_dict[i] = init_rain_kernel(size, 2.5 + (1/4*i), 0.1, 0.25)
+        else:
+            rain_dict[i] = init_rain_kernel(size, 2 + (1/4*i), 0.2, 0.5)
+    ret = torch.from_numpy(rain_dict)
+    ret = ret.unsqueeze(0).repeat(3, 1, 1, 1)
+    return ret
 
 
 class BasicResBlock(nn.Module):
@@ -90,8 +115,7 @@ class RCDNet(nn.Module):
         self.num_stages = num_stages
 
         # Rain kernel
-        rain_kernel = io.loadmat('mmderain/models/backbones/rcdnet_init_kernel.mat')['C9']
-        rain_kernel = torch.FloatTensor(rain_kernel)
+        rain_kernel = init_rain_kernel_dict()
 
         self.C0 = nn.Parameter(rain_kernel)
         self.C = nn.Parameter(rain_kernel)
