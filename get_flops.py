@@ -18,6 +18,10 @@ def parse_args():
         nargs='+',
         default=[256, 256],
         help='input image size')
+    parser.add_argument(
+        '--cpu',
+        action='store_true',
+        help='load model on cpu')
     args = parser.parse_args()
     return args
 
@@ -36,8 +40,9 @@ def main():
         raise ValueError('invalid input shape')
 
     cfg = Config.fromfile(args.config)
-    model = build_model(
-        cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg).cuda()
+    model = build_model(cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
+    if not args.cpu:
+        model = model.cuda()
     model.eval()
 
     if hasattr(model, 'forward_dummy'):
