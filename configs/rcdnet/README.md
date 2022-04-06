@@ -37,4 +37,8 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 | :-----------: | :----------: | :----: |
 | (3, 256, 256) | 194.54GFlops | 2.97M  |
 
-> **Help Wanted**: The results obtained from `test.py` deviates from the true value. It is speculated that the network weights has not been saved correctly. The experimental results given above are from the evaluation process of the last epoch (by checking log files). The evaluation process, which is called from `EvalHook`, differs from the testing process of `test.py` in that it loads the network weights in memory directly, without going through the serialization process.
+> **Help Wanted**
+> 
+> The results obtained from `test.py` deviates from the true value. It is speculated that the network weights has not been saved correctly. The experimental results given above are **from the evaluation process of the last epoch (by checking log files)**. The evaluation process, which is called from `EvalHook`, differs from the testing process of `test.py` in that it loads the network weights in memory directly, without going through the serialization process.
+> 
+> - Updated on 2022.4.6: Seems that it's not the issue of saving weights. Quite confused now.
