@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from mmcv.parallel import MMDataParallel
 from mmcv.runner import HOOKS, build_runner
-from mmcv.utils import build_from_cfg
+from mmcv.utils import TORCH_VERSION, build_from_cfg
 
 from mmderain.core import DistEvalHook, EvalHook, build_optimizers
 from mmderain.core.distributed_wrapper import DistributedDataParallelWrapper
@@ -107,7 +107,7 @@ def _dist_train(model,
     # step 1: give default values and override (if exist) from cfg.data
     loader_cfg = {
         **dict(seed=cfg.get('seed'), drop_last=False, dist=True),
-        **({} if torch.__version__ != 'parrots' else dict(
+        **({} if TORCH_VERSION != 'parrots' else dict(
             prefetch_num=2,
             pin_memory=False,
         )),
@@ -254,7 +254,7 @@ def _non_dist_train(model,
             drop_last=False,
             dist=False,
             num_gpus=cfg.gpus),
-        **({} if torch.__version__ != 'parrots' else dict(
+        **({} if TORCH_VERSION != 'parrots' else dict(
             prefetch_num=2,
             pin_memory=False,
         )),

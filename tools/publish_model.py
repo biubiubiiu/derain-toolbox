@@ -5,6 +5,7 @@ import argparse
 import subprocess
 
 import torch
+from mmcv.utils import TORCH_VERSION, digit_version
 
 
 def parse_args():
@@ -23,7 +24,7 @@ def process_checkpoint(in_file, out_file):
         del checkpoint['optimizer']
     # if it is necessary to remove some sensitive data in checkpoint['meta'],
     # add the code here.
-    if torch.__version__ >= '1.6':
+    if digit_version(TORCH_VERSION) >= digit_version('1.6'):
         torch.save(checkpoint, out_file, _use_new_zipfile_serialization=False)
     else:
         torch.save(checkpoint, out_file)

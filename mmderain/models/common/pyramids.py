@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-torch_version = torch.__version__.split('.')[1]
+from mmcv.utils import TORCH_VERSION, digit_version
 
 
 def gaussian_kernel_standard(channels=3, kernel_size=5, sigma=1):
@@ -21,7 +21,7 @@ def gaussian_kernel_standard(channels=3, kernel_size=5, sigma=1):
     """
     ax = torch.arange(kernel_size, dtype=torch.float32)
     ax = ax - torch.mean(ax)
-    if torch_version >= 10:
+    if digit_version(TORCH_VERSION) >= digit_version('1.10'):
         xx, yy = torch.meshgrid(ax, ax, indexing='ij')  # 'indexing' argument is added since 1.10.0
     else:
         xx, yy = torch.meshgrid(ax, ax)
