@@ -561,7 +561,10 @@ class RandomAffine:
         else:
             shear = 0.0
 
-        flip = (np.random.rand(2) < flip_ratio).astype(np.int) * 2 - 1
+        # Because `flip` is used as a multiplier in line 604 and 605,
+        # so -1 stands for flip and 1 stands for no flip. Thus `flip`
+        # should be an 'inverse' flag as the result of the comparison.
+        flip = (np.random.rand(2) > flip_ratio).astype(np.int) * 2 - 1
 
         return angle, translations, scale, shear, flip
 
@@ -636,7 +639,7 @@ class RandomAffine:
         params = self._get_params(self.degrees, self.translate, self.scale,
                                   self.shear, self.flip_ratio, (h, w))
 
-        center = (w * 0.5 + 0.5, h * 0.5 + 0.5)
+        center = (w * 0.5 - 0.5, h * 0.5 - 0.5)
         M = self._get_inverse_affine_matrix(center, *params)
         M = np.array(M).reshape((2, 3))
 
