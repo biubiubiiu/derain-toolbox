@@ -45,13 +45,14 @@ data = dict(
     train=dict(
         type='RepeatDataset',
         # NOTE: The offical implementation repeated the training set for several times,
-        # which is calculated by:
+        # where `times` is calculated by:
         #
         #       times = max(1, 1000//num_of_batches)
         #
-        # For Rain200L and Rain200H (both have 1800 data pairs), repeat times is 8
-        # For Rain800 (700 data pairs), repeat times in 23
-        # For Rain1200 and Rain1400, repeat times is 1
+        # For example, since we're using a batch size of 16, we can get that:
+        # - For Rain200L and Rain200H (both have 1800 data pairs), repeat times is 8
+        # - For Rain800 (700 data pairs), repeat times in 23
+        # - For Rain1200 and Rain1400, repeat times is 1
         times=8,
         dataset=dict(
             type=train_dataset_type,
