@@ -101,7 +101,7 @@ class IFM(nn.Module):
         y_prime = y * w0
 
         wx1, wx2 = torch.chunk(self.conv2(torch.cat([x, x_prime], dim=1)), chunks=2, dim=1)
-        wy1, wy2 = torch.chunk(self.conv3(torch.cat([x, x_prime], dim=1)), chunks=2, dim=1)
+        wy1, wy2 = torch.chunk(self.conv3(torch.cat([y, y_prime], dim=1)), chunks=2, dim=1)
 
         out_x = x*wx1 + x_prime*wx2
         out_y = y*wy1 + y_prime*wy2
