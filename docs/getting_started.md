@@ -23,6 +23,7 @@ Optional arguments are:
 - `--work-dir ${WORK_DIR}`: Override the working directory specified in the config file.
 - `--resume-from ${CHECKPOINT_FILE}`: Resume from a previous checkpoint file.
 - `--no-validate`: By default, the codebase will perform evaluation every k iterations during the training. To disable this behavior, use `--no-validate`
+- `--cfg-options`: If specified, the key-value pair optional cfg will be merged into config file.
 
 ## Testing
 
@@ -30,8 +31,16 @@ The evaluate a model's performance, use:
 
 ```bash
 # single-gpu testing
-python test.py ${CONFIG_FILE} ${CHECKPOINT_FILE} [--out ${RESULT_FILE}] [--save-path ${IMAGE_SAVE_PATH}]
+python test.py ${CONFIG_FILE} ${CHECKPOINT_FILE} [optional arguments]
 
 # multi-gpu testing
-./dist_test.sh ${CONFIG_FILE} ${CHECKPOINT_FILE} ${GPU_NUM} [--out ${RESULT_FILE}] [--save-path ${IMAGE_SAVE_PATH}]
+./dist_test.sh ${CONFIG_FILE} ${CHECKPOINT_FILE} ${GPU_NUM} [optional arguments]
 ```
+
+Optional arguments are:
+
+- `--out`: Specify the filename of the output results in pickle format. If not given, the results will not be saved to a file.
+- `--save-path`: Specify the path to store edited images. If not given, the images will not be saved.
+- `--seed`: Random seed during testing. This argument is used for fixed results in some tasks such as inpainting.
+- `--deterministic`: Related to `--seed`, this argument decides whether to set deterministic options for CUDNN backend. If specified, it will set `torch.backends.cudnn.deterministic` to True and `torch.backends.cudnn.benchmark` to False.
+- `--cfg-options`: If specified, the key-value pair optional cfg will be merged into config file.
