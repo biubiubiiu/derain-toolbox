@@ -31,11 +31,11 @@ The metrics are `PSNR/SSIM`. Both are evaluated on RGB channels.
 > 
 >    times = max(1, 1000//num_of_batches)
 >
-> - To reproduce the experiment, please set the `times` argument in the config accordingly
+> - To reproduce the experiment, **please adjust the `times` argument in [config](/configs/spdnet/spdnet_c32s3_l3ns3nr3.py) accordingly**
 
 |                       Method                       |  Rain200L   |  Rain200H   |   Rain800   |  Rain1200   |  Rain1400   |
 | :------------------------------------------------: | :---------: | :---------: | :---------: | :---------: | :---------: |
-| [SPDNet](/configs/spdnet/spdnet_c32s3_l3ns3nr3.py) | -----/----- | -----/----- | -----/----- | -----/----- | -----/----- |
+| [SPDNet](/configs/spdnet/spdnet_c32s3_l3ns3nr3.py) | 38.02/0.982 | 29.71/0.906 | 27.94/0.859 | 31.53/0.900 | 31.42/0.917 |
 
 <br/>
 

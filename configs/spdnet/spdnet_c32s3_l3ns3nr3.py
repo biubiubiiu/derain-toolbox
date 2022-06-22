@@ -51,7 +51,7 @@ data = dict(
         #
         # For example, since we're using a batch size of 16, we can get that:
         # - For Rain200L and Rain200H (both have 1800 data pairs), repeat times is 8
-        # - For Rain800 (700 data pairs), repeat times in 23
+        # - For Rain800 (700 data pairs), repeat times is 23
         # - For Rain1200 and Rain1400, repeat times is 1
         times=8,
         dataset=dict(
