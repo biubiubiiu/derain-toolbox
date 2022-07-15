@@ -50,7 +50,7 @@ class LoadImageFromFile:
         self.kwargs = kwargs
         self.file_client = None
         self.use_cache = use_cache
-        self.cache = None
+        self.cache = dict() if use_cache else None
         self.backend = backend
 
     def __call__(self, results):
@@ -67,8 +67,6 @@ class LoadImageFromFile:
         if self.file_client is None:
             self.file_client = FileClient(self.io_backend, **self.kwargs)
         if self.use_cache:
-            if self.cache is None:
-                self.cache = dict()
             if filepath in self.cache:
                 img = self.cache[filepath]
             else:
@@ -119,6 +117,9 @@ class LoadImageFromFileList(LoadImageFromFile):
             Default: 'bgr'.
         save_original_img (bool): If True, maintain a copy of the image in
             `results` dict with name of `f'ori_{key}'`. Default: False.
+        use_cache (bool): If True, load all images at once. Default: False.
+        backend (str): The image loading backend type. Options are `cv2`,
+            `pillow`, and 'turbojpeg'. Default: None.
         kwargs (dict): Args for file client.
     """
 
@@ -147,12 +148,28 @@ class LoadImageFromFileList(LoadImageFromFile):
         if self.save_original_img:
             ori_imgs = []
         for filepath in filepaths:
-            img_bytes = self.file_client.get(filepath)
-            img = mmcv.imfrombytes(
-                img_bytes, flag=self.flag,
-                channel_order=self.channel_order)  # HWC
+            if self.use_cache:
+                if filepath in self.cache:
+                    img = self.cache[filepath]
+                else:
+                    img_bytes = self.file_client.get(filepath)
+                    img = mmcv.imfrombytes(
+                        img_bytes,
+                        flag=self.flag,
+                        channel_order=self.channel_order,
+                        backend=self.backend)  # HWC
+                    self.cache[filepath] = img
+            else:
+                img_bytes = self.file_client.get(filepath)
+                img = mmcv.imfrombytes(
+                    img_bytes,
+                    flag=self.flag,
+                    channel_order=self.channel_order,
+                    backend=self.backend)  # HWC
+
             if img.ndim == 2:
                 img = np.expand_dims(img, axis=2)
+
             imgs.append(img)
             shapes.append(img.shape)
             if self.save_original_img:
@@ -189,6 +206,9 @@ class LoadPairedImageFromFile(LoadImageFromFile):
             Default: 'bgr'.
         save_original_img (bool): If True, maintain a copy of the image in
             `results` dict with name of `f'ori_{key}'`. Default: False.
+        use_cache (bool): If True, load all images at once. Default: False.
+        backend (str): The image loading backend type. Options are `cv2`,
+            `pillow`, and 'turbojpeg'. Default: None.
         kwargs (dict): Args for file client.
     """
 
@@ -214,7 +234,7 @@ class LoadPairedImageFromFile(LoadImageFromFile):
         self.kwargs = kwargs
         self.file_client = None
         self.use_cache = use_cache
-        self.cache = None
+        self.cache = dict() if use_cache else None
         self.backend = backend
 
     def __call__(self, results):
@@ -227,12 +247,28 @@ class LoadPairedImageFromFile(LoadImageFromFile):
         Returns:
             dict: A dict containing the processed data and information.
         """
+        filepath = str(results['pair_path'])
         if self.file_client is None:
             self.file_client = FileClient(self.io_backend, **self.kwargs)
-        filepath = str(results['pair_path'])
-        img_bytes = self.file_client.get(filepath)
-        img = mmcv.imfrombytes(
-            img_bytes, flag=self.flag, channel_order=self.channel_order)  # HWC
+        if self.use_cache:
+            if filepath in self.cache:
+                img = self.cache[filepath]
+            else:
+                img_bytes = self.file_client.get(filepath)
+                img = mmcv.imfrombytes(
+                    img_bytes,
+                    flag=self.flag,
+                    channel_order=self.channel_order,
+                    backend=self.backend)  # HWC
+                self.cache[filepath] = img
+        else:
+            img_bytes = self.file_client.get(filepath)
+            img = mmcv.imfrombytes(
+                img_bytes,
+                flag=self.flag,
+                channel_order=self.channel_order,
+                backend=self.backend)  # HWC
+
         if img.ndim == 2:
             img = np.expand_dims(img, axis=2)
 
